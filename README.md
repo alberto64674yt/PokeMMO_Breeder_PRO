@@ -20,7 +20,7 @@ A diferencia de las guías de texto estáticas o las calculadoras antiguas, este
 
 * **Arquitectura Inversa:** Tú defines el resultado final (ej: Garchomp 5x31 Alegre) y el sistema calcula hacia atrás cada cruce necesario hasta llegar a los Pokémon base.
 * **Lógica de Seguridad 100%:** El algoritmo prioriza rutas seguras de solapamiento de IVs. Jamás te sugerirá un cruce que dependa del azar (RNG) para heredar una estadística crítica.
-* **Gestión de Inventario:** Diferencia automáticamente entre objetos que se recuperan (Piedraeterna) y objetos que se consumen (Objetos Recios), generando una lista exacta de materiales a conseguir.
+* **Gestión de Inventario Real:** Calcula con precisión milimétrica la cantidad de **consumibles** necesarios, teniendo en cuenta que en PokeMMO tanto los **Objetos Recios** como la **Piedraeterna** se pierden tras cada crianza.
 * **Interfaz Guiada:** Un sistema visual de tarjetas que te indica en cada paso:
     * Qué género (Macho/Hembra) necesitas.
     * Qué objeto equipar a cada padre.
@@ -31,7 +31,7 @@ A diferencia de las guías de texto estáticas o las calculadoras antiguas, este
 ## ⚙️ Funcionamiento
 
 1.  **Panel de Diseño:** Seleccionas los IVs deseados y la Naturaleza.
-2.  **Lista de Logística:** La aplicación genera un resumen con la cantidad exacta de "Materiales Base" (Pokémon 1x31 salvajes) y consumibles necesarios.
+2.  **Lista de Logística:** La aplicación genera un resumen con la cantidad exacta de "Materiales Base" (Pokémon 1x31 salvajes) y todos los objetos consumibles que deberás comprar.
 3.  **Ejecución:** El modo "Paso a Paso" te lleva de la mano desde la captura base hasta el huevo final.
 
 ---
