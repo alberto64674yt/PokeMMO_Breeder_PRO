@@ -31,7 +31,7 @@ A diferencia de las guías de texto estáticas o las calculadoras antiguas, este
 ## ⚙️ Funcionamiento
 
 1.  **Panel de Diseño:** Seleccionas los IVs deseados y la Naturaleza.
-2.  **Lista de Logística:** La aplicación genera un resumen con la cantidad exacta de "Materiales Base" (Pokémon 1x31 salvajes) y todos los objetos consumibles que deberás comprar.
+2.  **Lista de Logística:** La aplicación genera un resumen con la cantidad exacta de "Materiales Base" (Pokémon 1x31 salvajes) y todos los objetos consumibles que deberás comprar/capturar/farmear.
 3.  **Ejecución:** El modo "Paso a Paso" te lleva de la mano desde la captura base hasta el huevo final.
 
 ---
