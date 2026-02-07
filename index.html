@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeMMO Breeder PRO - Guía Interactiva</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+</head>
+<body>
+
+    <div class="overlay">
+        
+        <header>
+            <h1>POKEMMO BREEDER <span style="color:var(--highlight)">PRO</span></h1>
+            <p>Asistente de Crianza Paso a Paso</p>
+        </header>
+
+        <div id="config-panel" class="panel">
+            <h2>🎯 DISEÑA TU POKÉMON</h2>
+            
+            <div class="control-group">
+                <label>Selecciona los Stats (Mínimo 2):</label>
+                <div class="stats-selector">
+                    <label class="stat-check"><input type="checkbox" value="HP"> HP</label>
+                    <label class="stat-check"><input type="checkbox" value="Atk"> Atk</label>
+                    <label class="stat-check"><input type="checkbox" value="Def"> Def</label>
+                    <label class="stat-check"><input type="checkbox" value="SpA"> SpA</label>
+                    <label class="stat-check"><input type="checkbox" value="SpD"> SpD</label>
+                    <label class="stat-check"><input type="checkbox" value="Spe"> Spe</label>
+                </div>
+                <p class="small-text" id="target-counter">Objetivo Actual: Vacío</p>
+            </div>
+
+            <div class="control-group">
+                <label>Valor del IV:</label>
+                <select id="iv-type">
+                    <option value="31">31 (Perfecto)</option>
+                    <option value="0">0 (Meme / Trick Room)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Naturaleza:</label>
+                <div class="nature-input-group">
+                    <div class="toggle-container">
+                        <span>No</span>
+                        <label class="switch">
+                            <input type="checkbox" id="nature-check" onchange="toggleNatureInput()">
+                            <span class="slider round"></span>
+                        </label>
+                        <span>Sí</span>
+                    </div>
+                    
+                    <select id="nature-select" class="input-select" style="display:none;">
+                        <option value="Firme">Firme (+Atk -SpA)</option>
+                        <option value="Modesta">Modesta (+SpA -Atk)</option>
+                        <option value="Alegre">Alegre (+Spe -SpA)</option>
+                        <option value="Miedosa">Miedosa (+Spe -Atk)</option>
+                        <option value="Audaz">Audaz (+Atk -Spe)</option>
+                        <option value="Mansa">Mansa (+SpA -Spe)</option>
+                        <option value="Osada">Osada (+Def -Atk)</option>
+                        <option value="Serena">Serena (+SpD -Atk)</option>
+                        <option value="Agitada">Agitada (+Def -SpA)</option>
+                        <option value="Cauta">Cauta (+SpD -SpA)</option>
+                        <option value="Grosera">Grosera (+SpD -Spe)</option>
+                        <option value="Placida">Plácida (+Def -Spe)</option>
+                        <option value="Otra">Otra (Cualquiera)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="startBreeding()" class="btn-start">GENERAR GUÍA</button>
+        </div>
+
+        <div id="shopping-panel" class="panel hidden">
+            <h2>🛒 LISTA DE LA COMPRA</h2>
+            <p>Materiales exactos para tu combinación:</p>
+            <div id="shopping-list-items" class="shopping-grid">
+                </div>
+            <div class="nav-buttons">
+                <button onclick="resetApp()" class="btn-danger">❌ Cancelar</button>
+                <button onclick="goToSteps()" class="btn-next">YA LO TENGO TODO &rarr;</button>
+            </div>
+        </div>
+
+        <div id="step-panel" class="panel hidden full-width">
+            
+            <div class="step-header">
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <div id="step-counter" class="step-counter">Paso 1 de X</div>
+                </div>
+                <button onclick="resetApp()" class="btn-reset-small" title="Reiniciar de cero">🔄 REINICIAR</button>
+            </div>
+
+            <h2 id="step-title">PASO 1</h2>
+            <p id="step-desc" class="step-instruction">...</p>
+
+            <div class="breeding-diagram">
+                
+                <div class="poke-card" id="card-parent-a">
+                    <div class="role-badge">PADRE A</div>
+                    <img src="assets/pokeball.png" class="poke-img" alt="Pokemon">
+                    <img src="assets/genero_m.png" class="gender-icon" id="gender-a">
+                    <div class="stats-box" id="stats-a"></div>
+                    <div class="item-slot">
+                        <img id="item-img-a" src="" alt="Item">
+                        <span id="item-name-a">Objeto A</span>
+                    </div>
+                </div>
+
+                <div class="fusion-operator">+</div>
+
+                <div class="poke-card" id="card-parent-b">
+                    <div class="role-badge">PADRE B</div>
+                    <img src="assets/pokeball.png" class="poke-img" alt="Pokemon">
+                    <img src="assets/genero_f.png" class="gender-icon" id="gender-b">
+                    <div class="stats-box" id="stats-b"></div>
+                    <div class="item-slot">
+                        <img id="item-img-b" src="" alt="Item">
+                        <span id="item-name-b">Objeto B</span>
+                    </div>
+                </div>
+
+                <div class="fusion-arrow">➡</div>
+
+                <div class="poke-card child-card">
+                    <div class="role-badge result">RESULTADO</div>
+                    <img src="assets/huevo.png" class="poke-img huevo-anim" alt="Huevo">
+                    <div class="stats-box" id="stats-child"></div>
+                    <div class="info-note" id="child-note"></div>
+                </div>
+
+            </div>
+
+            <div class="nav-buttons">
+                <button onclick="prevStep()" class="btn-secondary">Anterior</button>
+                <button onclick="nextStep()" class="btn-primary">¡HECHO! Siguiente Paso</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="logic.js"></script>
+</body>
+</html>

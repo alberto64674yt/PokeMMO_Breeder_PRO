@@ -1,0 +1,249 @@
+:root {
+    --bg-dark: #121212;
+    --card-bg: #1e1e1e;
+    --highlight: #00e676; 
+    --nature: #ffd700; 
+    --danger: #ff5252;
+    --gender-cost: #ff4081; 
+    --text-main: #ffffff;
+    --border: #333;
+    --info-blue: #29b6f6; /* Nuevo color azul info */
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    background-image: url('assets/fondo.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+.overlay {
+    background-color: rgba(0, 0, 0, 0.92);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+h1, h2, h3 { 
+    text-transform: uppercase; 
+    letter-spacing: 2px; 
+    margin: 0 0 10px 0; 
+    text-align: center; 
+}
+
+/* CABECERA */
+header {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* PANELES */
+.panel {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    max-width: 600px;
+    width: 100%;
+    margin-top: 20px;
+    transition: opacity 0.3s;
+}
+
+.panel.hidden { display: none; }
+.panel.full-width { max-width: 1300px; }
+
+/* CONTROLES DE CONFIGURACIÓN */
+.control-group { margin: 20px 0; text-align: center; }
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--highlight);
+}
+
+select { 
+    padding: 12px; 
+    font-size: 16px; 
+    background: #333; 
+    color: white; 
+    border: 1px solid #555; 
+    border-radius: 5px; 
+    width: 100%;
+}
+
+/* SELECTOR DE STATS */
+.stats-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.stat-check {
+    background: #333;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s;
+    border: 1px solid #444;
+}
+
+.stat-check:hover { background: #444; }
+
+.stat-check input {
+    accent-color: var(--highlight);
+    transform: scale(1.2);
+}
+
+.small-text {
+    font-size: 14px;
+    color: #888;
+    margin-top: 5px;
+}
+
+/* INPUT NATURALEZA */
+.nature-input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #555;
+    background: #222;
+    color: var(--nature);
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    max-width: 250px;
+}
+
+/* SWITCH */
+.toggle-container { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; }
+.slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; }
+input:checked + .slider { background-color: var(--highlight); }
+input:checked + .slider:before { transform: translateX(26px); }
+.slider.round { border-radius: 34px; }
+.slider.round:before { border-radius: 50%; }
+
+/* BOTONES */
+button { border: none; padding: 15px 30px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 8px; transition: 0.2s; text-transform: uppercase; }
+.btn-start { background: var(--highlight); color: black; width: 100%; font-size: 18px; }
+.btn-next { background: var(--highlight); color: black; }
+.btn-primary { background: var(--highlight); color: black; }
+.btn-secondary { background: #444; color: white; }
+.btn-danger { background: var(--danger); color: white; }
+button:hover { transform: scale(1.02); filter: brightness(1.1); }
+
+.nav-buttons { display: flex; justify-content: space-between; margin-top: 30px; gap: 20px; }
+
+.step-header { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+.btn-reset-small { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 5px 15px; font-size: 12px; }
+.btn-reset-small:hover { background: var(--danger); color: white; }
+
+/* LISTA DE COMPRA */
+.shopping-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0; }
+.shop-item { background: #111; padding: 15px; border-radius: 8px; border-left: 4px solid var(--highlight); display: flex; align-items: center; justify-content: space-between; }
+
+/* NOTAS DE COMPRA */
+.shopping-note {
+    background-color: rgba(255, 82, 82, 0.15);
+    border: 1px solid var(--danger);
+    color: #ffcccb;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-size: 15px;
+    text-align: center;
+    line-height: 1.5;
+}
+.shopping-note strong { color: var(--danger); text-decoration: underline; }
+
+.info-note-yellow {
+    background-color: rgba(255, 215, 0, 0.1); 
+    border: 1px solid var(--nature);
+    color: #eee;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* NUEVA NOTA AZUL (GRUPOS HUEVO) */
+.info-note-blue {
+    background-color: rgba(41, 182, 246, 0.15); 
+    border: 1px solid var(--info-blue);
+    color: #e1f5fe;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 15px;
+    text-align: center;
+    line-height: 1.5;
+    grid-column: 1 / -1; /* Ocupa todo el ancho en grid */
+}
+.info-note-blue strong { color: var(--info-blue); }
+
+/* DIAGRAMA */
+.breeding-diagram { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 40px; margin: 40px 0; }
+.fusion-operator, .fusion-arrow { font-size: 40px; color: #666; font-weight: bold; }
+
+.poke-card {
+    background: #252525; width: 300px; padding: 20px; border-radius: 12px; border: 1px solid #444;
+    display: flex; flex-direction: column; align-items: center; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.child-card { border: 2px solid var(--highlight); box-shadow: 0 0 20px rgba(0, 230, 118, 0.1); }
+.poke-card.has-nature { border: 2px solid var(--nature); box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
+
+.nature-badge {
+    position: absolute; top: -10px; right: -10px; background: var(--nature); color: black;
+    padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 10;
+}
+
+.gender-cost-badge {
+    margin-top: 5px; background: #333; color: var(--gender-cost); border: 1px solid var(--gender-cost);
+    padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase;
+}
+
+.role-badge { background: #333; padding: 4px 12px; border-radius: 4px; font-size: 12px; margin-bottom: 10px; text-transform: uppercase; color: #aaa; letter-spacing: 1px; }
+.result { background: var(--highlight); color: black; font-weight: bold; }
+
+.poke-img { width: 100px; height: 100px; object-fit: contain; margin-bottom: 10px; }
+.gender-icon { width: 24px; position: absolute; top: 15px; left: 15px; }
+
+.stats-box { background: #111; width: 100%; padding: 10px; border-radius: 6px; font-family: 'Consolas', monospace; font-size: 14px; margin: 15px 0; }
+.stat-row { display: flex; justify-content: space-between; margin: 4px 0; padding-bottom: 4px; border-bottom: 1px solid #222; }
+.stat-row:last-child { border-bottom: none; }
+.stat-val.perfect { color: var(--highlight); font-weight: bold; }
+.stat-val.bad { color: var(--danger); font-weight: bold; }
+
+.item-slot { display: flex; align-items: center; gap: 10px; background: #000; padding: 8px 15px; border-radius: 30px; border: 1px solid #444; width: 90%; justify-content: center; }
+.item-slot img { width: 30px; height: 30px; }
+
+.info-note { margin-top: 10px; color: #888; font-size: 14px; text-align: center; line-height: 1.4; white-space: pre-line; }
+.step-instruction { font-size: 20px; color: #eee; text-align: center; max-width: 900px; margin: 0 auto; line-height: 1.6; white-space: pre-line; }
+
+.progress-container { flex-grow: 1; margin-right: 20px; }
+.progress-bar { width: 100%; height: 10px; background: #333; border-radius: 5px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--highlight); width: 0%; transition: width 0.3s ease; }
+.step-counter { text-align: right; font-size: 12px; color: #888; margin-top: 4px; }
