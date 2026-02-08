@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pokemmobreederpro.netlify.app/sitemap.xml
