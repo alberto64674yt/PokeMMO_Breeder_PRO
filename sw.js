@@ -4,7 +4,7 @@
 
 // --- VERSIÓN DE LA CACHÉ ---
 // CAMBIA ESTO CADA VEZ QUE ACTUALICES LA WEB (v1 -> v2 -> v3...)
-const CACHE_NAME = 'pokebreeder-pro-v2';
+const CACHE_NAME = 'pokebreeder-pro-v3';
 
 // LISTA DE TODOS LOS ARCHIVOS A GUARDAR EN EL MÓVIL DEL USUARIO
 const ASSETS_TO_CACHE = [
@@ -70,3 +70,4 @@ self.addEventListener('fetch', (e) => {
   );
 
 });
+
