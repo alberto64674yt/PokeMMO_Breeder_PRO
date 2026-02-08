@@ -6,6 +6,8 @@
     <title>PokeMMO Breeder PRO - Guía Interactiva</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+	<link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#121212">
 </head>
 <body>
 
@@ -54,18 +56,35 @@
                     
                     <select id="nature-select" class="input-select" style="display:none;">
                         <option value="Firme">Firme (+Atk -SpA)</option>
+                        <option value="Audaz">Audaz (+Atk -Spe)</option>
+                        <option value="Huraña">Huraña (+Atk -Def)</option>
+                        <option value="Pícara">Pícara (+Atk -SpD)</option>
+
+                        <option value="Osada">Osada (+Def -Atk)</option>
+                        <option value="Plácida">Plácida (+Def -Spe)</option>
+                        <option value="Agitada">Agitada (+Def -SpA)</option>
+                        <option value="Floja">Floja (+Def -SpD)</option>
+
                         <option value="Modesta">Modesta (+SpA -Atk)</option>
+                        <option value="Mansa">Mansa (+SpA -Spe)</option>
+                        <option value="Afable">Afable (+SpA -Def)</option>
+                        <option value="Alocada">Alocada (+SpA -SpD)</option>
+
+                        <option value="Serena">Serena (+SpD -Atk)</option>
+                        <option value="Grosera">Grosera (+SpD -Spe)</option>
+                        <option value="Cauta">Cauta (+SpD -SpA)</option>
+                        <option value="Amable">Amable (+SpD -Def)</option>
+
                         <option value="Alegre">Alegre (+Spe -SpA)</option>
                         <option value="Miedosa">Miedosa (+Spe -Atk)</option>
-                        <option value="Audaz">Audaz (+Atk -Spe)</option>
-                        <option value="Mansa">Mansa (+SpA -Spe)</option>
-                        <option value="Osada">Osada (+Def -Atk)</option>
-                        <option value="Serena">Serena (+SpD -Atk)</option>
-                        <option value="Agitada">Agitada (+Def -SpA)</option>
-                        <option value="Cauta">Cauta (+SpD -SpA)</option>
-                        <option value="Grosera">Grosera (+SpD -Spe)</option>
-                        <option value="Placida">Plácida (+Def -Spe)</option>
-                        <option value="Otra">Otra (Cualquiera)</option>
+                        <option value="Activa">Activa (+Spe -Def)</option>
+                        <option value="Ingenua">Ingenua (+Spe -SpD)</option>
+
+                        <option value="Fuerte">Fuerte (Neutra)</option>
+                        <option value="Dócil">Dócil (Neutra)</option>
+                        <option value="Seria">Seria (Neutra)</option>
+                        <option value="Tímida">Tímida (Neutra)</option>
+                        <option value="Rara">Rara (Neutra)</option>
                     </select>
                 </div>
             </div>
@@ -144,6 +163,16 @@
         </div>
 
     </div>
+
+	<script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then((reg) => console.log('SW listo ✅', reg.scope))
+            .catch((err) => console.log('SW falló ❌', err));
+        });
+      }
+    </script>
 
     <script src="logic.js"></script>
 </body>

@@ -216,8 +216,27 @@ button:hover { transform: scale(1.02); filter: brightness(1.1); }
 .poke-card.has-nature { border: 2px solid var(--nature); box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
 
 .nature-badge {
-    position: absolute; top: -10px; right: -10px; background: var(--nature); color: black;
-    padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 10;
+    position: absolute; 
+    top: -10px; 
+    right: -10px; 
+    background: var(--nature); 
+    color: black;
+    padding: 4px 10px; 
+    border-radius: 20px; 
+    font-weight: bold; 
+    font-size: 12px; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5); 
+    z-index: 10;
+    display: flex;          /* Nuevo: para alinear icono y texto */
+    align-items: center;    /* Nuevo: centrado vertical */
+    gap: 4px;               /* Nuevo: espacio entre icono y texto */
+}
+
+/* Nuevo: Clase para controlar el tamaño de la hojita */
+.nature-icon-img {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
 }
 
 .gender-cost-badge {
@@ -247,3 +266,48 @@ button:hover { transform: scale(1.02); filter: brightness(1.1); }
 .progress-bar { width: 100%; height: 10px; background: #333; border-radius: 5px; overflow: hidden; }
 .progress-fill { height: 100%; background: var(--highlight); width: 0%; transition: width 0.3s ease; }
 .step-counter { text-align: right; font-size: 12px; color: #888; margin-top: 4px; }
+
+/* --- RESPONSIVE / MÓVIL --- */
+@media (max-width: 768px) {
+    
+    /* Ajustar cabecera */
+    h1 { font-size: 1.5rem; }
+    h2 { font-size: 1.2rem; }
+    .panel { padding: 15px; margin-top: 10px; }
+
+    /* Diagrama en columna vertical en vez de fila */
+    .breeding-diagram {
+        flex-direction: column; /* Uno debajo de otro */
+        gap: 20px;
+    }
+
+    /* Rotar flechas para que apunten abajo */
+    .fusion-arrow { transform: rotate(90deg); margin: 10px 0; }
+    
+    /* Cartas ocupan el ancho disponible pero sin pasarse */
+    .poke-card {
+        width: 100%; 
+        max-width: 320px; /* Evita que sean gigantes en tablets */
+    }
+
+    /* Ajustar botones para que sean más fáciles de pulsar con el dedo */
+    .nav-buttons {
+        flex-direction: column-reverse; /* "Siguiente" arriba, "Anterior" abajo */
+        gap: 10px;
+    }
+    
+    button {
+        width: 100%; /* Botones ancho completo */
+        padding: 18px; /* Más zona táctil */
+    }
+
+    /* Ajustar selectores de stats (2 columnas en vez de 3) */
+    .stats-selector {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Ocultar descripciones largas si molestan o hacer letra más pequeña */
+    .step-instruction {
+        font-size: 16px;
+    }
+}

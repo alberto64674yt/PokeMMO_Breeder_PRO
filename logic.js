@@ -28,6 +28,71 @@ const ITEM_NAME_MAP = {
     "Spe": "Franja Recia"
 };
 
+// --- DICCIONARIO COMPLETO (25 NATURALEZAS) ---
+const NATURE_DATA = {
+    // +Ataque
+    "Firme":   { up: "Atk", down: "SpA" },
+    "Audaz":   { up: "Atk", down: "Spe" },
+    "Huraña":  { up: "Atk", down: "Def" },
+    "Pícara":  { up: "Atk", down: "SpD" },
+
+    // +Defensa
+    "Osada":   { up: "Def", down: "Atk" },
+    "Plácida": { up: "Def", down: "Spe" }, 
+    "Agitada": { up: "Def", down: "SpA" },
+    "Floja":   { up: "Def", down: "SpD" },
+
+    // +Ataque Especial
+    "Modesta": { up: "SpA", down: "Atk" },
+    "Mansa":   { up: "SpA", down: "Spe" },
+    "Afable":  { up: "SpA", down: "Def" },
+    "Alocada": { up: "SpA", down: "SpD" },
+
+    // +Defensa Especial
+    "Serena":  { up: "SpD", down: "Atk" },
+    "Grosera": { up: "SpD", down: "Spe" },
+    "Cauta":   { up: "SpD", down: "SpA" },
+    "Amable":  { up: "SpD", down: "Def" },
+
+    // +Velocidad
+    "Alegre":  { up: "Spe", down: "SpA" },
+    "Miedosa": { up: "Spe", down: "Atk" },
+    "Activa":  { up: "Spe", down: "Def" },
+    "Ingenua": { up: "Spe", down: "SpD" },
+
+    // Neutras (No suben ni bajan nada)
+    "Fuerte":  { up: null, down: null },
+    "Dócil":   { up: null, down: null },
+    "Seria":   { up: null, down: null },
+    "Tímida":  { up: null, down: null }, 
+    "Rara":    { up: null, down: null }
+};
+
+function getNatureEvaluation(natName, selectedStats) {
+    // Si no existe en la lista, devolvemos neutro por seguridad
+    if (!NATURE_DATA[natName]) return { color: "orange", text: "Neutra" };
+
+    const data = NATURE_DATA[natName];
+    
+    // CASO 0: NATURALEZA NEUTRA
+    if (data.up === null && data.down === null) {
+        return { color: "orange", text: "Neutra" };
+    }
+
+    // CASO 1: ROJO (Peligro) - Baja un stat seleccionado
+    if (selectedStats.includes(data.down)) {
+        return { color: "#ff5252", text: "Desfavorable" }; 
+    }
+
+    // CASO 2: VERDE (Excelente) - Sube deseado y baja no deseado
+    if (selectedStats.includes(data.up) && !selectedStats.includes(data.down)) {
+        return { color: "#00e676", text: "Excelente" }; 
+    }
+
+    // CASO 3: NARANJA (Ineficiente) - Resto de casos
+    return { color: "orange", text: "Ineficiente" };
+}
+
 /* --- INICIALIZACIÓN --- */
 window.onload = function() {
     // Reset visual
@@ -367,7 +432,8 @@ function renderCard(cardId, statsId, imgId, txtId, data, val) {
         card.classList.add('has-nature');
         let badge = document.createElement('div');
         badge.className = 'nature-badge';
-        badge.innerHTML = '🧬 ' + config.natureName;
+        // AQUÍ ESTÁ TU ICONO
+        badge.innerHTML = `<img src="assets/nature_icon.png" class="nature-icon-img"> ${config.natureName}`;
         card.appendChild(badge);
     }
 
@@ -376,9 +442,15 @@ function renderCard(cardId, statsId, imgId, txtId, data, val) {
         html += `<div class="stat-row"><span>${s}</span><span class="stat-val perfect">${val}</span></div>`;
     });
     
-    // Fila de naturaleza en los stats
+    // Fila de naturaleza en los stats (CON LA LÓGICA DE COLORES NUEVA)
     if (data.nat) {
-        html += `<div class="stat-row" style="color:gold; border-top:1px dashed #555; margin-top:5px; padding-top:2px;"><span>${config.natureName}</span><span>Favorable</span></div>`;
+        // Calculamos si es buena, mala o regular
+        const evaluation = getNatureEvaluation(config.natureName, config.selectedStats);
+        
+        html += `<div class="stat-row" style="color:${evaluation.color}; border-top:1px dashed #555; margin-top:5px; padding-top:2px;">
+                    <span>${config.natureName}</span>
+                    <span style="font-weight:bold">${evaluation.text}</span>
+                 </div>`;
     }
     document.getElementById(statsId).innerHTML = html;
 
