@@ -28,6 +28,21 @@
     <div class="overlay">
         
         <header>
+            <div style="position: absolute; top: 15px; right: 15px; z-index: 200;">
+                <button id="lang-btn" onclick="toggleLangMenu(event)" 
+                        style="background: rgba(0,0,0,0.8); color: #ddd; border: 1px solid #555; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 8px; font-family: sans-serif;">
+                    Language 🌐 <span style="font-size: 10px;">▼</span>
+                </button>
+
+                <div id="lang-dropdown" style="display: none; position: absolute; top: 110%; right: 0; background: #1a1a1a; border: 1px solid #444; border-radius: 6px; min-width: 160px; flex-direction: column;">
+                    <div style="padding: 10px 15px; background: #333; color: white; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #333;">
+                        <img src="assets/spain_flag.svg" style="width: 24px;"> <strong>Español</strong>
+                    </div>
+                    <a href="languages/US/index.html" style="padding: 10px 15px; color: #bbb; text-decoration: none; display: flex; align-items: center; gap: 10px;">
+                        <img src="assets/usa_flag.svg" style="width: 24px;"> English
+                    </a>
+                </div>
+            </div>
             <h1>POKEMMO BREEDER <span style="color:var(--highlight)">PRO</span></h1>
             <p>Asistente de Crianza Paso a Paso</p>
         </header>
@@ -202,6 +217,22 @@
             .catch((err) => console.log('SW falló ❌', err));
         });
       }
+    </script>
+
+	<script>
+      function toggleLangMenu(e) {
+          e.stopPropagation();
+          const menu = document.getElementById('lang-dropdown');
+          if (menu) menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+      }
+
+      window.addEventListener('click', function(e) {
+          const menu = document.getElementById('lang-dropdown');
+          const btn = document.getElementById('lang-btn');
+          if (menu && menu.style.display === 'flex' && !menu.contains(e.target) && !btn.contains(e.target)) {
+              menu.style.display = 'none';
+          }
+      });
     </script>
 
     <script src="logic.js"></script>

@@ -3,8 +3,8 @@
 */
 
 // --- VERSIÓN DE LA CACHÉ ---
-// CAMBIA ESTO CADA VEZ QUE ACTUALICES LA WEB (v1 -> v2 -> v3...)
-const CACHE_NAME = 'pokebreeder-pro-v3';
+// Mantenemos la v4 como pediste (asegúrate de que sea superior a la que tienes publicada)
+const CACHE_NAME = 'pokebreeder-pro-v4';
 
 // LISTA DE TODOS LOS ARCHIVOS A GUARDAR EN EL MÓVIL DEL USUARIO
 const ASSETS_TO_CACHE = [
@@ -13,6 +13,10 @@ const ASSETS_TO_CACHE = [
   './index.html',
   './style.css',
   './logic.js',
+
+  // --- NUEVO: VERSIÓN INGLESA ---
+  './languages/US/index.html',
+  './languages/US/logic.js',
   
   // Imágenes Base
   './assets/favicon.ico',
@@ -22,7 +26,11 @@ const ASSETS_TO_CACHE = [
   './assets/piedraeterna.png',
   './assets/genero_m.png',
   './assets/genero_f.png',
-  './assets/nature_icon.png', // <--- TU NUEVO ICONO
+  './assets/nature_icon.png',
+
+  // --- NUEVO: BANDERAS ---
+  './assets/usa_flag.svg',
+  './assets/spain_flag.svg',
 
   // Brazales (Objetos Recios)
   './assets/brazal_ps.png',
@@ -68,6 +76,4 @@ self.addEventListener('fetch', (e) => {
       return response || fetch(e.request);
     })
   );
-
 });
-
