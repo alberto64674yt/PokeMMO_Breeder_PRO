@@ -69,26 +69,28 @@ const NATURE_DATA = {
 };
 
 function getNatureEvaluation(natName, selectedStats) {
+    // Safety check
     if (!NATURE_DATA[natName]) return { color: "orange", text: "Neutral" };
 
     const data = NATURE_DATA[natName];
     
-    // NEUTRAL CASE
+    // CASE 0: NEUTRAL NATURE (e.g. Hardy, Docile)
     if (data.up === null && data.down === null) {
-        return { color: "orange", text: "Neutral" };
+        return { color: "#ffd700", text: "Neutral" }; // Gold color
     }
 
-    // BAD CASE (Red) - Lowers a selected stat
+    // CASE 1: BAD (Red) - Lowers a stat YOU selected in the main menu
     if (selectedStats.includes(data.down)) {
         return { color: "#ff5252", text: "Bad" }; 
     }
 
-    // EXCELLENT CASE (Green) - Raises needed, lowers unneeded
-    if (selectedStats.includes(data.up) && !selectedStats.includes(data.down)) {
+    // CASE 2: EXCELLENT (Green) - Raises a needed stat
+    // (Since it passed the Red check, we know it doesn't lower anything important)
+    if (selectedStats.includes(data.up)) {
         return { color: "#00e676", text: "Excellent" }; 
     }
 
-    // INEFFICIENT CASE (Orange)
+    // CASE 3: INEFFICIENT (Orange) - Raises something unneeded
     return { color: "orange", text: "Inefficient" };
 }
 
@@ -305,82 +307,143 @@ function createPokemonRecipe(stats, nature, isMainLine) {
     return { stats: stats, nature: nature, isBase: false };
 }
 
-/* --- SHOPPING LIST --- */
 function generateShoppingList() {
     const listDiv = document.getElementById('shopping-list-items');
     listDiv.innerHTML = "";
     
-    // --- BLUE NOTE ---
+    // --- 1. BLUE NOTE (Info) ---
     let blueNote = document.createElement('div');
     blueNote.className = 'info-note-blue';
     blueNote.innerHTML = `ℹ️ <strong>BREEDING REQUIREMENT:</strong><br>All Pokemon (Males and Females) must be in the <strong>SAME EGG GROUP</strong>.<br>You can also use <strong>Dittos</strong> (universal), but check if the price is worth it.`;
     listDiv.appendChild(blueNote);
-    
-    // Estimate Bases
-    let n = config.selectedStats.length;
-    let estimatedBase = Math.pow(2, n - 1) * 2; 
 
-    // Count Items
-    let itemCounts = {};
+    // --- 2. COUNTERS (Exact Math) ---
     let everstoneCount = 0;
+    let powerItemsCount = {}; // To count Power Items
+    let fodderMalesCount = {}; // To count Base Males by Stat
 
+    // Loop through steps to count exactly what is needed
     steps.forEach(step => {
+        // PARENT A
         if (step.pA.item === "Everstone") {
             everstoneCount++;
         } else {
-            if (!itemCounts[step.pA.item]) itemCounts[step.pA.item] = 0;
-            itemCounts[step.pA.item]++;
+            let item = step.pA.item;
+            if (!powerItemsCount[item]) powerItemsCount[item] = 0;
+            powerItemsCount[item]++;
         }
-        
+
+        // PARENT B (Fodder)
         if (step.pB.item === "Everstone") {
             everstoneCount++;
         } else {
-            if (!itemCounts[step.pB.item]) itemCounts[step.pB.item] = 0;
-            itemCounts[step.pB.item]++;
+            // 1. Count the item
+            let item = step.pB.item;
+            if (!powerItemsCount[item]) powerItemsCount[item] = 0;
+            powerItemsCount[item]++;
+
+            // 2. Identify which STAT corresponds to this item (for the Male list)
+            // (e.g., If item is "Power Weight", it's an HP Male)
+            let statFound = null;
+            for (const [key, val] of Object.entries(ITEM_NAME_MAP)) {
+                if (val === item) { // val is "Power Weight", key is "HP"
+                    statFound = key; 
+                    break;
+                }
+            }
+            
+            if (statFound) {
+                if (!fodderMalesCount[statFound]) fodderMalesCount[statFound] = 0;
+                fodderMalesCount[statFound]++;
+            }
         }
     });
 
-    const items = [];
+    // --- 3. CREATE VISUAL LIST ---
+    const itemsToShow = [];
 
-    // Base Pokemon
-    if (config.nature) {
-        items.push({ name: `Base Female (Nature ${config.natureName})`, count: 1, icon: "genero_f.png" });
-        items.push({ name: `Base Males 1x${config.value} (To Sacrifice)`, count: `~${estimatedBase}`, icon: "genero_m.png" });
-    } else {
-        items.push({ name: `Base Female 1x${config.value}`, count: 1, icon: "genero_f.png" });
-        items.push({ name: `Base Males 1x${config.value} (Rest)`, count: `~${estimatedBase}`, icon: "genero_m.png" });
+    // A) BASE FEMALE (Mother)
+    let motherStat = config.selectedStats[0]; 
+    let motherTitle = config.nature 
+        ? `Base Female 1x${config.value} (${motherStat}) + Nat. ${config.natureName}` 
+        : `Base Female 1x${config.value} (${motherStat})`;
+
+    itemsToShow.push({
+        name: motherTitle,
+        count: 1,
+        icon: "genero_f.png"
+    });
+
+    // B) BASE MALES (Broken down by Stat)
+    for (const [stat, count] of Object.entries(fodderMalesCount)) {
+        itemsToShow.push({
+            name: `Base Males 1x${config.value} (<strong>${stat}</strong>)`,
+            count: count,
+            icon: "genero_m.png"
+        });
     }
 
-    // Everstone
+    // C) EVERSTONES
     if (config.nature && everstoneCount > 0) {
-        items.push({ name: "Everstone (CONSUMED)", count: everstoneCount, icon: "piedraeterna.png" });
+        itemsToShow.push({ 
+            name: "Everstone (CONSUMED)", 
+            count: everstoneCount, 
+            icon: "piedraeterna.png"
+        });
     }
 
-    // Power Items
-    for (const [name, count] of Object.entries(itemCounts)) {
-        let icon = "brazal_atk.png"; // Fallback
-        
-        // Reverse Lookup: Real Name -> Stat -> Image
+    // D) POWER ITEMS
+    for (const [itemName, count] of Object.entries(powerItemsCount)) {
+        let icon = "brazal_atk.png"; 
+        // Find correct icon based on English Name
         for (const [statKey, realName] of Object.entries(ITEM_NAME_MAP)) {
-            if (realName === name) {
+            if (realName === itemName) {
                 icon = ASSETS_IMG_MAP[statKey];
                 break;
             }
         }
-
-        items.push({ name: `${name} (CONSUMED)`, count: count, icon: icon });
+        itemsToShow.push({ 
+            name: `${itemName} (CONSUMED)`, 
+            count: count, 
+            icon: icon
+        });
     }
 
-    items.forEach(item => {
+    // --- 4. RENDER HTML (With Checkboxes) ---
+    itemsToShow.forEach(item => {
         let div = document.createElement('div');
         div.className = 'shop-item';
-        div.innerHTML = `<div style="display:flex; align-items:center; gap:10px;"><img src="../../assets/${item.icon}" style="width:30px;"><strong>${item.name}</strong></div><span style="color:var(--highlight); font-weight:bold">x${item.count}</span>`;
+        
+        // Styles for clickability
+        div.style.cursor = 'pointer';
+        div.style.userSelect = 'none'; 
+
+        // Click Logic: Toggle class and checkbox
+        div.onclick = function() { 
+            this.classList.toggle('comprado'); 
+            let chk = this.querySelector('input');
+            if(chk) chk.checked = !chk.checked;
+        };
+
+        // INTERNAL HTML
+        // Note: We use ../../assets/ because this file is inside languages/US/
+        div.innerHTML = `
+            <div style="display:flex; align-items:center; gap:12px;">
+                <input type="checkbox" style="pointer-events:none; transform: scale(1.2);"> 
+                <img src="../../assets/${item.icon}" style="width:32px; height:32px; object-fit:contain;">
+                <span style="font-size: 0.95em;">${item.name}</span>
+            </div>
+            <div style="background:var(--highlight); color:#000; padding:2px 8px; border-radius:4px; font-weight:bold;">
+                x${item.count}
+            </div>
+        `;
         listDiv.appendChild(div);
     });
 
+    // Final Note
     let noteDiv = document.createElement('div');
     noteDiv.className = 'shopping-note';
-    noteDiv.innerHTML = `<strong>⚠️ NOTE:</strong> EVERYTHING IS CONSUMED (Power Items and Everstones).<br>Buy/Catch step by step.`;
+    noteDiv.innerHTML = `<strong>TIP:</strong> Tap items to cross them out as you get them.`;
     listDiv.appendChild(noteDiv);
 }
 
