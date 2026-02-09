@@ -273,8 +273,8 @@ function createPokemonRecipe(stats, nature, isMainLine, requiredGender) {
     } else {
         stepTitle = `⚙️ PREPARANDO SACRIFICIO ${stats.length}x${config.value}`;
         desc = `ESTE PASO ES SOLO PARA CREAR MATERIALES.\nNecesitas crear un Macho fuerte para dárselo luego a tu Madre Principal.\n\n`;
-        desc += `🔸 MADRE (Fodder): Tiene [${commonStats.join(", ")}].\n`;
-        desc += `🔹 PADRE (Fodder): Tiene [${statsForB.join(", ")}].`;
+        desc += `🔸 MADRE (Sacrificio): Tiene [${commonStats.join(", ")}].\n`;
+        desc += `🔹 PADRE (Sacrificio): Tiene [${statsForB.join(", ")}].`;
     }
 
     let childGenderCost = isMainLine ? "REQUISITO: HEMBRA (Tu Proyecto)" : "REQUISITO: MACHO (Para usar luego)";
