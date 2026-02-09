@@ -105,7 +105,10 @@ window.onload = function() {
 
     // Listeners
     const checkboxes = document.querySelectorAll('.stat-check input');
-    checkboxes.forEach(cb => cb.addEventListener('change', updateCounter));
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', updateCounter);
+        cb.addEventListener('change', updateStartingOptions); 
+    });
 };
 
 function updateCounter() {
@@ -167,6 +170,17 @@ function startBreeding() {
     document.querySelectorAll('.stat-check input:checked').forEach(cb => {
         config.selectedStats.push(cb.value);
     });
+
+	// --- NEW LOGIC: REORDER BASED ON MOTHER PREFERENCE ---
+    const preferredStart = document.getElementById('starting-stat-select').value;
+    
+    if (preferredStart && config.selectedStats.includes(preferredStart)) {
+        // 1. Remove that stat from current position
+        config.selectedStats = config.selectedStats.filter(s => s !== preferredStart);
+        // 2. Add it to the BEGINNING (Mother Line)
+        config.selectedStats.unshift(preferredStart);
+    }
+    // -----------------------------------------------------
 
     if (config.selectedStats.length < 2) {
         alert("Please select at least 2 Stats.");
@@ -481,5 +495,41 @@ function prevStep() {
         currentStepIndex--;
         renderStep();
         saveProgress();
+    }
+}
+
+/* --- NEW FUNCTION: UPDATE STARTING OPTIONS --- */
+function updateStartingOptions() {
+    const checkboxes = document.querySelectorAll('.stat-check input:checked');
+    const container = document.getElementById('starting-stat-container');
+    const select = document.getElementById('starting-stat-select');
+    
+    // Safety check
+    if (!container || !select) return;
+
+    if (checkboxes.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+    
+    container.style.display = 'block';
+    
+    // Save current selection
+    const currentVal = select.value;
+    select.innerHTML = ""; // Clear options
+
+    checkboxes.forEach(cb => {
+        let option = document.createElement('option');
+        option.value = cb.value;
+        option.text = cb.value; // e.g. HP, Atk...
+        select.appendChild(option);
+    });
+
+    // Restore selection if possible
+    if (currentVal) {
+        let options = Array.from(select.options);
+        if (options.some(o => o.value === currentVal)) {
+            select.value = currentVal;
+        }
     }
 }
