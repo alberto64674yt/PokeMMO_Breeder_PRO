@@ -1,6 +1,7 @@
 /* --- APPLICATION STATE --- */
 let currentStepIndex = 0;
 let steps = [];
+let rawIngredients = [];
 let config = { 
     selectedStats: [], 
     value: 31, 
@@ -219,14 +220,22 @@ function resetApp() {
     }
 }
 
-/* --- RECURSIVE GENERATOR --- */
+/* --- RECURSIVE GENERATOR WITH GENDERS --- */
 function buildTree(statsArray, hasNature) {
-    createPokemonRecipe(statsArray, hasNature, true);
+    rawIngredients = []; // Clear ingredients list
+    // Main line starts requiring a FEMALE (Mother)
+    createPokemonRecipe(statsArray, hasNature, true, "Female");
 }
 
-function createPokemonRecipe(stats, nature, isMainLine) {
-    // BASE CASE
+function createPokemonRecipe(stats, nature, isMainLine, requiredGender) {
+    // BASE CASE: 1x31 Ingredient (Buy/Catch)
     if (stats.length === 1) {
+        rawIngredients.push({
+            stat: stats[0],
+            gender: requiredGender,
+            isMain: isMainLine // We track if this is the Main Mother line
+        });
+        
         return { stats: stats, nature: nature, isBase: true };
     }
 
@@ -235,20 +244,20 @@ function createPokemonRecipe(stats, nature, isMainLine) {
     let statsForB = [];
     
     if (nature) {
-        // Logic WITH Nature
         commonStats = stats.slice(0, stats.length - 1); 
         statsForB = [...commonStats, newStat];
     } else {
-        // Logic WITHOUT Nature
         commonStats = stats.slice(0, stats.length - 1); 
         statsForB = stats.slice(1, stats.length);       
     }
 
-    // RECURSION
-    let parentA_Config = createPokemonRecipe(commonStats, nature, isMainLine);
-    let parentB_Config = createPokemonRecipe(statsForB, false, false);
+    // RECURSION:
+    // Parent A MUST always be Female (Mother)
+    // Parent B MUST always be Male (Father)
+    let parentA_Config = createPokemonRecipe(commonStats, nature, isMainLine, "Female");
+    let parentB_Config = createPokemonRecipe(statsForB, false, false, "Male");
 
-    // ITEM DEFINITION
+    // ITEM DEFINITIONS
     let itemA, itemB;
     if (nature) {
         itemA = "Everstone";
@@ -258,27 +267,26 @@ function createPokemonRecipe(stats, nature, isMainLine) {
         itemB = ITEM_NAME_MAP[newStat];
     }
 
-    // TITLES AND DESCRIPTIONS
-    let natText = nature ? ` (w/ ${config.natureName})` : "";
-    let stepTitle = `FUSION ${stats.length}x${config.value}${natText}`;
-    
-    if (!isMainLine) {
-        stepTitle = `CREATING FODDER ${stats.length}x${config.value}`;
-    }
-
+    // --- TEXTS & DESCRIPTIONS (Distinguishing Main Project vs Fodder) ---
+    let natText = nature ? ` + NATURE (${config.natureName})` : "";
+    let stepTitle = "";
     let desc = "";
-    if (nature) {
-        desc = `MOTHER: Has [${commonStats.join(", ")}] and keeps Nature with EVERSTONE.\n`;
-        desc += `FATHER: Has [${statsForB.join(", ")}] and gives the new stat with ${ITEM_NAME_MAP[newStat]}.\n`;
-        desc += `\n✅ 100% SAFE: Stats [${commonStats.join(", ")}] are inherited fixed because both parents have them (Full Overlap).`;
+
+    if (isMainLine) {
+        stepTitle = `🏆 YOUR PROJECT: FUSION ${stats.length}x${config.value}${natText}`;
+        desc = `THIS IS A MAIN STEP.\nYou are improving your Main Mother using a Male Fodder.\n\n`;
+        desc += `🔸 MOTHER (Main): Inherits base stats [${commonStats.join(", ")}].\n`;
+        desc += `🔹 FATHER (Fodder): Provides the new stat [${newStat}] to complete the step.`;
     } else {
-        desc = `MOTHER: Has [${commonStats.join(", ")}] (Holds ${ITEM_NAME_MAP[commonStats[0]]}).\n`;
-        desc += `FATHER: Has [${statsForB.join(", ")}] (Holds ${ITEM_NAME_MAP[newStat]}).`;
+        stepTitle = `⚙️ PREPARING FODDER ${stats.length}x${config.value}`;
+        desc = `THIS STEP IS JUST FOR CREATING MATERIALS.\nYou need to create a strong Male to give to your Main Mother later.\n\n`;
+        desc += `🔸 MOTHER (Fodder): Has [${commonStats.join(", ")}].\n`;
+        desc += `🔹 FATHER (Fodder): Has [${statsForB.join(", ")}].`;
     }
 
-    let childGenderCost = isMainLine ? "GENDER COST: FEMALE" : "GENDER COST: MALE";
+    let childGenderCost = isMainLine ? "REQ: FEMALE (Your Project)" : "REQ: MALE (For later use)";
 
-    // ADD STEP
+    // SAVE STEP
     steps.push({
         title: stepTitle,
         desc: desc,
@@ -287,7 +295,7 @@ function createPokemonRecipe(stats, nature, isMainLine) {
             item: itemA, 
             nat: parentA_Config.nature, 
             gender: "Female", 
-            role: isMainLine ? "MOTHER (Main)" : "MOTHER (For Fodder)", 
+            role: isMainLine ? "MOTHER (Main)" : "MOTHER (Fodder)", 
         },
         pB: { 
             stats: parentB_Config.stats, 
@@ -299,7 +307,7 @@ function createPokemonRecipe(stats, nature, isMainLine) {
         child: { 
             stats: stats, 
             nat: nature,
-            note: isMainLine ? "New Main Mother" : "New Fodder Ready",
+            note: isMainLine ? "PROJECT ADVANCED" : "FODDER READY",
             cost: childGenderCost
         }
     });
@@ -307,126 +315,125 @@ function createPokemonRecipe(stats, nature, isMainLine) {
     return { stats: stats, nature: nature, isBase: false };
 }
 
+/* --- PRECISE SHOPPING LIST (Optimized) --- */
 function generateShoppingList() {
     const listDiv = document.getElementById('shopping-list-items');
     listDiv.innerHTML = "";
     
-    // --- 1. BLUE NOTE (Info) ---
+    // BLUE NOTE (Translated)
     let blueNote = document.createElement('div');
     blueNote.className = 'info-note-blue';
-    blueNote.innerHTML = `ℹ️ <strong>BREEDING REQUIREMENT:</strong><br>All Pokemon (Males and Females) must be in the <strong>SAME EGG GROUP</strong>.<br>You can also use <strong>Dittos</strong> (universal), but check if the price is worth it.`;
+    blueNote.innerHTML = `
+        ℹ️ <strong>BREEDING REQUIREMENT:</strong><br>
+        All Pokémon (Males and Females) must be from the <strong>SAME EGG GROUP</strong>. You can also use <strong>Dittos</strong> (universal), though check if the price is worth it.
+        <br><br>
+        ✨ <strong>OPTIMIZED:</strong> We have separated Males, Females, and your Main Mother so you save money and don't get confused.
+    `;
     listDiv.appendChild(blueNote);
 
-    // --- 2. COUNTERS (Exact Math) ---
-    let everstoneCount = 0;
-    let powerItemsCount = {}; // To count Power Items
-    let fodderMalesCount = {}; // To count Base Males by Stat
+    // --- 1. SEPARATE MAIN MOTHER FROM FODDER ---
+    let mainMotherIng = null;
+    let otherIngredients = [];
 
-    // Loop through steps to count exactly what is needed
-    steps.forEach(step => {
-        // PARENT A
-        if (step.pA.item === "Everstone") {
-            everstoneCount++;
+    for (let ing of rawIngredients) {
+        if (ing.isMain && ing.gender === "Female" && !mainMotherIng) {
+            mainMotherIng = ing; // Found the jewel
         } else {
-            let item = step.pA.item;
-            if (!powerItemsCount[item]) powerItemsCount[item] = 0;
-            powerItemsCount[item]++;
+            otherIngredients.push(ing);
         }
+    }
 
-        // PARENT B (Fodder)
-        if (step.pB.item === "Everstone") {
-            everstoneCount++;
+    // --- 2. COUNT REMAINDER (Fodder) ---
+    let totalFemales = {}; 
+    let totalMales = {};   
+    
+    otherIngredients.forEach(ing => {
+        if (ing.gender === "Female") {
+            if (!totalFemales[ing.stat]) totalFemales[ing.stat] = 0;
+            totalFemales[ing.stat]++;
         } else {
-            // 1. Count the item
-            let item = step.pB.item;
-            if (!powerItemsCount[item]) powerItemsCount[item] = 0;
-            powerItemsCount[item]++;
-
-            // 2. Identify which STAT corresponds to this item (for the Male list)
-            // (e.g., If item is "Power Weight", it's an HP Male)
-            let statFound = null;
-            for (const [key, val] of Object.entries(ITEM_NAME_MAP)) {
-                if (val === item) { // val is "Power Weight", key is "HP"
-                    statFound = key; 
-                    break;
-                }
-            }
-            
-            if (statFound) {
-                if (!fodderMalesCount[statFound]) fodderMalesCount[statFound] = 0;
-                fodderMalesCount[statFound]++;
-            }
+            if (!totalMales[ing.stat]) totalMales[ing.stat] = 0;
+            totalMales[ing.stat]++;
         }
     });
 
-    // --- 3. CREATE VISUAL LIST ---
+    // 2. COUNT ITEMS
+    let everstoneCount = 0;
+    let powerItemsCount = {};
+    
+    steps.forEach(step => {
+        [step.pA, step.pB].forEach(p => {
+            if (p.item === "Everstone") everstoneCount++;
+            else {
+                if (!powerItemsCount[p.item]) powerItemsCount[p.item] = 0;
+                powerItemsCount[p.item]++;
+            }
+        });
+    });
+
+    // --- RENDER ---
     const itemsToShow = [];
 
-    // A) BASE FEMALE (Mother)
-    let motherStat = config.selectedStats[0]; 
-    let motherTitle = config.nature 
-        ? `Base Female 1x${config.value} (${motherStat}) + Nat. ${config.natureName}` 
-        : `Base Female 1x${config.value} (${motherStat})`;
-
-    itemsToShow.push({
-        name: motherTitle,
-        count: 1,
-        icon: "genero_f.png"
-    });
-
-    // B) BASE MALES (Broken down by Stat)
-    for (const [stat, count] of Object.entries(fodderMalesCount)) {
+    // A) THE MAIN MOTHER (Gold Border)
+    if (mainMotherIng) {
         itemsToShow.push({
-            name: `Base Males 1x${config.value} (<strong>${stat}</strong>)`,
+            name: `👑 <strong>MOTHER BASE (Your Project)</strong><br><span style="font-size:0.9em; color:#ccc">Must be 1x${config.value} in ${mainMotherIng.stat}</span>`,
+            count: 1,
+            icon: "genero_f.png",
+            isSpecial: true
+        });
+    }
+
+    // B) FEMALES (Fodder)
+    for (const [stat, count] of Object.entries(totalFemales)) {
+        itemsToShow.push({
+            name: `Females (Fodder) 1x${config.value} in <strong>${stat}</strong>`,
+            count: count,
+            icon: "genero_f.png"
+        });
+    }
+
+    // C) MALES (Fodder)
+    for (const [stat, count] of Object.entries(totalMales)) {
+        itemsToShow.push({
+            name: `Males (Fodder) 1x${config.value} in <strong>${stat}</strong>`,
             count: count,
             icon: "genero_m.png"
         });
     }
 
-    // C) EVERSTONES
+    // D) ITEMS
     if (config.nature && everstoneCount > 0) {
-        itemsToShow.push({ 
-            name: "Everstone (CONSUMED)", 
-            count: everstoneCount, 
-            icon: "piedraeterna.png"
-        });
+        itemsToShow.push({ name: "Everstone (CONSUMED)", count: everstoneCount, icon: "piedraeterna.png" });
     }
 
-    // D) POWER ITEMS
     for (const [itemName, count] of Object.entries(powerItemsCount)) {
-        let icon = "brazal_atk.png"; 
-        // Find correct icon based on English Name
+        let icon = "brazal_atk.png";
+        // Map English item names to asset filenames
         for (const [statKey, realName] of Object.entries(ITEM_NAME_MAP)) {
-            if (realName === itemName) {
-                icon = ASSETS_IMG_MAP[statKey];
-                break;
-            }
+            if (realName === itemName) { icon = ASSETS_IMG_MAP[statKey]; break; }
         }
-        itemsToShow.push({ 
-            name: `${itemName} (CONSUMED)`, 
-            count: count, 
-            icon: icon
-        });
+        itemsToShow.push({ name: `${itemName} (CONSUMED)`, count: count, icon: icon });
     }
 
-    // --- 4. RENDER HTML (With Checkboxes) ---
+    // CREATE HTML
     itemsToShow.forEach(item => {
         let div = document.createElement('div');
         div.className = 'shop-item';
         
-        // Styles for clickability
-        div.style.cursor = 'pointer';
-        div.style.userSelect = 'none'; 
+        // Special Gold Style for Main Mother
+        if (item.isSpecial) {
+            div.style.border = "2px solid #ffd700";
+            div.style.background = "rgba(255, 215, 0, 0.1)";
+        }
 
-        // Click Logic: Toggle class and checkbox
         div.onclick = function() { 
             this.classList.toggle('comprado'); 
             let chk = this.querySelector('input');
             if(chk) chk.checked = !chk.checked;
         };
 
-        // INTERNAL HTML
-        // Note: We use ../../assets/ because this file is inside languages/US/
+        // IMAGE PATH FIXED: ../../assets/
         div.innerHTML = `
             <div style="display:flex; align-items:center; gap:12px;">
                 <input type="checkbox" style="pointer-events:none; transform: scale(1.2);"> 
@@ -439,11 +446,11 @@ function generateShoppingList() {
         `;
         listDiv.appendChild(div);
     });
-
-    // Final Note
+    
+    // RED NOTE (Translated)
     let noteDiv = document.createElement('div');
     noteDiv.className = 'shopping-note';
-    noteDiv.innerHTML = `<strong>TIP:</strong> Tap items to cross them out as you get them.`;
+    noteDiv.innerHTML = `<strong>TIP:</strong> Tap items in the list to <strong>cross them off</strong> as you catch or buy them.`;
     listDiv.appendChild(noteDiv);
 }
 
