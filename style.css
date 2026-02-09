@@ -311,3 +311,15 @@ button:hover { transform: scale(1.02); filter: brightness(1.1); }
         font-size: 16px;
     }
 }
+
+/* --- ESTILOS DE LA LISTA DE COMPRA INTERACTIVA --- */
+.shop-item.comprado {
+    opacity: 0.5;
+    background-color: #1a3b2a; /* Fondo verde oscuro muy suave */
+    border: 1px solid #2e7d32;
+}
+
+.shop-item.comprado span {
+    text-decoration: line-through; /* Tachar texto */
+    color: #888;
+}

@@ -69,27 +69,28 @@ const NATURE_DATA = {
 };
 
 function getNatureEvaluation(natName, selectedStats) {
-    // Si no existe en la lista, devolvemos neutro por seguridad
+    // Seguridad: Si la naturaleza no existe en la BD, devolvemos neutro
     if (!NATURE_DATA[natName]) return { color: "orange", text: "Neutra" };
 
     const data = NATURE_DATA[natName];
     
     // CASO 0: NATURALEZA NEUTRA
     if (data.up === null && data.down === null) {
-        return { color: "orange", text: "Neutra" };
+        return { color: "#ffd700", text: "Neutra" }; // Color Oro
     }
 
-    // CASO 1: ROJO (Peligro) - Baja un stat seleccionado
+    // CASO 1: ROJO (PELIGRO) - La naturaleza baja un stat que TÚ has marcado en la lista inicial
     if (selectedStats.includes(data.down)) {
         return { color: "#ff5252", text: "Desfavorable" }; 
     }
 
-    // CASO 2: VERDE (Excelente) - Sube deseado y baja no deseado
-    if (selectedStats.includes(data.up) && !selectedStats.includes(data.down)) {
+    // CASO 2: VERDE (EXCELENTE) - La naturaleza sube un stat que quieres
+    // (Como ya ha pasado el filtro rojo, sabemos que no baja nada importante)
+    if (selectedStats.includes(data.up)) {
         return { color: "#00e676", text: "Excelente" }; 
     }
 
-    // CASO 3: NARANJA (Ineficiente) - Resto de casos
+    // CASO 3: NARANJA (INEFICIENTE) - Sube algo que no pediste, pero no rompe nada
     return { color: "orange", text: "Ineficiente" };
 }
 
@@ -306,86 +307,149 @@ function createPokemonRecipe(stats, nature, isMainLine) {
     return { stats: stats, nature: nature, isBase: false };
 }
 
-/* --- LISTA DE COMPRA PRECISA --- */
 function generateShoppingList() {
     const listDiv = document.getElementById('shopping-list-items');
     listDiv.innerHTML = "";
     
-    // --- NUEVO: AVISO AZUL (GRUPO HUEVO / DITTO) ---
+    // --- 1. AVISO AZUL (Información) ---
     let blueNote = document.createElement('div');
     blueNote.className = 'info-note-blue';
     blueNote.innerHTML = `ℹ️ <strong>REQUISITO DE CRÍA:</strong><br>Todos los Pokémon (Machos y Hembras) deben ser del <strong>MISMO GRUPO HUEVO</strong>.<br>También puedes usar <strong>Dittos</strong> (son universales), aunque revisa si te compensa el precio.`;
     listDiv.appendChild(blueNote);
-    // ------------------------------------------------
 
-    // Cálculo estimado de bases
-    let n = config.selectedStats.length;
-    let estimatedBase = Math.pow(2, n - 1) * 2; 
-
-    // Contar Items Reales escaneando los pasos generados
-    let itemCounts = {};
+    // --- 2. CONTADORES (Matemática Exacta) ---
     let everstoneCount = 0;
+    let powerItemsCount = {}; // Para contar Brazales
+    let fodderMalesCount = {}; // Para contar Machos Base por Stat
 
+    // Recorremos los pasos generados para ver qué pide cada uno
     steps.forEach(step => {
-        // Objeto Padre A
+        // PADRE A (Suele ser la Madre o quien hereda)
         if (step.pA.item === "Piedraeterna") {
             everstoneCount++;
         } else {
-            if (!itemCounts[step.pA.item]) itemCounts[step.pA.item] = 0;
-            itemCounts[step.pA.item]++;
+            // Contamos el objeto recio
+            let item = step.pA.item;
+            if (!powerItemsCount[item]) powerItemsCount[item] = 0;
+            powerItemsCount[item]++;
         }
-        
-        // Objeto Padre B
+
+        // PADRE B (Suele ser el Macho de Sacrificio/Fodder)
         if (step.pB.item === "Piedraeterna") {
             everstoneCount++;
         } else {
-            if (!itemCounts[step.pB.item]) itemCounts[step.pB.item] = 0;
-            itemCounts[step.pB.item]++;
+            // 1. Contamos el objeto recio que lleva
+            let item = step.pB.item;
+            if (!powerItemsCount[item]) powerItemsCount[item] = 0;
+            powerItemsCount[item]++;
+
+            // 2. Identificamos qué STAT es ese objeto para la lista de Machos
+            // (Ej: Si lleva "Pesa Recia", es un Macho de HP)
+            let statFound = null;
+            for (const [key, val] of Object.entries(ITEM_NAME_MAP)) {
+                if (val === item) { // Si el nombre del objeto coincide
+                    statFound = key; // Guardamos "HP", "Atk", etc.
+                    break;
+                }
+            }
+            
+            if (statFound) {
+                if (!fodderMalesCount[statFound]) fodderMalesCount[statFound] = 0;
+                fodderMalesCount[statFound]++;
+            }
         }
     });
 
-    const items = [];
+    // --- 3. CREACIÓN DE LA LISTA VISUAL ---
+    const itemsToShow = [];
 
-    // Pokémon Base
-    if (config.nature) {
-        items.push({ name: `Hembra Base (Naturaleza ${config.natureName})`, count: 1, icon: "genero_f.png" });
-        items.push({ name: `Machos Base 1x${config.value} (Para sacrificar)`, count: `~${estimatedBase}`, icon: "genero_m.png" });
-    } else {
-        items.push({ name: `Hembra Base 1x${config.value}`, count: 1, icon: "genero_f.png" });
-        items.push({ name: `Machos Base 1x${config.value} (Resto)`, count: `~${estimatedBase}`, icon: "genero_m.png" });
+    // A) HEMBRA BASE (La Madre Inicial)
+    // El primer stat elegido siempre es el de la madre
+    let motherStat = config.selectedStats[0]; 
+    let motherTitle = config.nature 
+        ? `Hembra Base 1x31 (${motherStat}) + Nat. ${config.natureName}` 
+        : `Hembra Base 1x31 (${motherStat})`;
+
+    itemsToShow.push({
+        name: motherTitle,
+        count: 1,
+        icon: "genero_f.png",
+        type: "pokemon"
+    });
+
+    // B) MACHOS BASE (Desglosados por Stat)
+    // Recorremos el contador que creamos arriba
+    for (const [stat, count] of Object.entries(fodderMalesCount)) {
+        itemsToShow.push({
+            name: `Machos Base 1x31 (<strong>${stat}</strong>)`,
+            count: count,
+            icon: "genero_m.png",
+            type: "pokemon"
+        });
     }
 
-    // Piedraeterna (SE CONSUME)
+    // C) PIEDRAS ETERNAS
     if (config.nature && everstoneCount > 0) {
-        items.push({ name: "Piedraeterna (SE CONSUMEN)", count: everstoneCount, icon: "piedraeterna.png" });
+        itemsToShow.push({ 
+            name: "Piedraeterna (SE CONSUMEN)", 
+            count: everstoneCount, 
+            icon: "piedraeterna.png",
+            type: "item"
+        });
     }
 
-    // Objetos Recios (Usando nombres reales)
-    for (const [name, count] of Object.entries(itemCounts)) {
-        // Encontrar el icono basado en el nombre del objeto
-        let icon = "brazal_atk.png"; // Fallback
-        
-        // Búsqueda inversa: Nombre Real -> Stat -> Imagen
+    // D) OBJETOS RECIOS (Brazales)
+    for (const [itemName, count] of Object.entries(powerItemsCount)) {
+        // Buscamos el icono correcto
+        let icon = "brazal_atk.png"; 
         for (const [statKey, realName] of Object.entries(ITEM_NAME_MAP)) {
-            if (realName === name) {
+            if (realName === itemName) {
                 icon = ASSETS_IMG_MAP[statKey];
                 break;
             }
         }
-
-        items.push({ name: `${name} (SE CONSUMEN)`, count: count, icon: icon });
+        itemsToShow.push({ 
+            name: `${itemName} (SE CONSUMEN)`, 
+            count: count, 
+            icon: icon,
+            type: "item"
+        });
     }
 
-    items.forEach(item => {
+    // --- 4. RENDERIZADO HTML (Con Checkboxes) ---
+    itemsToShow.forEach(item => {
         let div = document.createElement('div');
         div.className = 'shop-item';
-        div.innerHTML = `<div style="display:flex; align-items:center; gap:10px;"><img src="assets/${item.icon}" style="width:30px;"><strong>${item.name}</strong></div><span style="color:var(--highlight); font-weight:bold">x${item.count}</span>`;
+        
+        // Estilos para que parezca clicable
+        div.style.cursor = 'pointer';
+        div.style.userSelect = 'none'; // Para no seleccionar el texto al hacer clic rápido
+
+        // Lógica del Click: Poner/Quitar clase "comprado" y marcar checkbox
+        div.onclick = function() { 
+            this.classList.toggle('comprado'); 
+            let chk = this.querySelector('input');
+            if(chk) chk.checked = !chk.checked;
+        };
+
+        // HTML INTERNO
+        div.innerHTML = `
+            <div style="display:flex; align-items:center; gap:12px;">
+                <input type="checkbox" style="pointer-events:none; transform: scale(1.2);"> 
+                <img src="assets/${item.icon}" style="width:32px; height:32px; object-fit:contain;">
+                <span style="font-size: 0.95em;">${item.name}</span>
+            </div>
+            <div style="background:var(--highlight); color:#000; padding:2px 8px; border-radius:4px; font-weight:bold;">
+                x${item.count}
+            </div>
+        `;
         listDiv.appendChild(div);
     });
 
+    // Nota final
     let noteDiv = document.createElement('div');
     noteDiv.className = 'shopping-note';
-    noteDiv.innerHTML = `<strong>⚠️ NOTA:</strong> TODO SE CONSUME (Objetos Recios y Piedraeterna).<br>Ve comprando/capturando paso a paso.`;
+    noteDiv.innerHTML = `<strong>TIP:</strong> Toca los elementos para tacharlos según los vayas consiguiendo.`;
     listDiv.appendChild(noteDiv);
 }
 
