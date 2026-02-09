@@ -1,6 +1,7 @@
 /* --- ESTADO DE LA APLICACIÓN --- */
 let currentStepIndex = 0;
 let steps = [];
+let rawIngredients = [];
 let config = { 
     selectedStats: [], 
     value: 31, 
@@ -214,15 +215,21 @@ function resetApp() {
     }
 }
 
-/* --- GENERADOR RECURSIVO --- */
+/* --- GENERADOR RECURSIVO CON GÉNEROS --- */
 function buildTree(statsArray, hasNature) {
-    createPokemonRecipe(statsArray, hasNature, true);
+    rawIngredients = []; // Limpiamos la lista
+    // La línea principal empieza pidiendo una HEMBRA (Madre del proyecto)
+    createPokemonRecipe(statsArray, hasNature, true, "Hembra");
 }
 
-function createPokemonRecipe(stats, nature, isMainLine) {
-    // CASO BASE: Si es 1 stat, retornamos la configuración para que el padre la use,
-    // pero NO generamos un paso de crianza (es una compra/captura).
+function createPokemonRecipe(stats, nature, isMainLine, requiredGender) {
+    // CASO BASE: Ingrediente 1x31 (Compra/Captura)
     if (stats.length === 1) {
+        rawIngredients.push({
+            stat: stats[0],
+            gender: requiredGender,
+            isMain: isMainLine // <--- ESTO ES LA CLAVE QUE USAMOS LUEGO
+        });
         return { stats: stats, nature: nature, isBase: true };
     }
 
@@ -230,25 +237,20 @@ function createPokemonRecipe(stats, nature, isMainLine) {
     let commonStats = [];
     let statsForB = [];
     
+    // Lógica de herencia
     if (nature) {
-        // LÓGICA CON NATURALEZA (100% SEGURA)
         commonStats = stats.slice(0, stats.length - 1); 
-        
-        // CORRECCIÓN FINAL: Para garantizar el 100% incluso en el primer paso (2x31),
-        // el padre (Sacrificio) SIEMPRE debe tener los stats comunes + el nuevo.
         statsForB = [...commonStats, newStat];
-
     } else {
-        // Lógica Sin Naturaleza (Ventana Deslizante)
         commonStats = stats.slice(0, stats.length - 1); 
         statsForB = stats.slice(1, stats.length);       
     }
 
-    // RECURSIÓN
-    let parentA_Config = createPokemonRecipe(commonStats, nature, isMainLine);
-    let parentB_Config = createPokemonRecipe(statsForB, false, false);
+    // Recursividad (A siempre Hembra, B siempre Macho)
+    let parentA_Config = createPokemonRecipe(commonStats, nature, isMainLine, "Hembra");
+    let parentB_Config = createPokemonRecipe(statsForB, false, false, "Macho");
 
-    // DEFINICIÓN DE OBJETOS
+    // Objetos
     let itemA, itemB;
     if (nature) {
         itemA = "Piedraeterna";
@@ -258,27 +260,25 @@ function createPokemonRecipe(stats, nature, isMainLine) {
         itemB = ITEM_NAME_MAP[newStat];
     }
 
-    // TÍTULOS Y DESCRIPCIONES
-    let natText = nature ? ` (con ${config.natureName})` : "";
-    let stepTitle = `FUSIÓN ${stats.length}x${config.value}${natText}`;
-    
-    if (!isMainLine) {
-        stepTitle = `CREANDO SACRIFICIO ${stats.length}x${config.value}`;
-    }
-
+    // --- AQUÍ ARREGLAMOS LOS TEXTOS QUE TE MOLESTABAN ---
+    let natText = nature ? ` + NATURALEZA (${config.natureName})` : "";
+    let stepTitle = "";
     let desc = "";
-    if (nature) {
-        desc = `MADRE: Tiene [${commonStats.join(", ")}] y conserva la Nat con PIEDRAETERNA.\n`;
-        desc += `PADRE: Tiene [${statsForB.join(", ")}] y aporta el nuevo stat con ${ITEM_NAME_MAP[newStat]}.\n`;
-        desc += `\n✅ 100% SEGURO: Los stats [${commonStats.join(", ")}] se heredan fijos porque ambos padres los tienen (Solapamiento Total).`;
+
+    if (isMainLine) {
+        stepTitle = `🏆 TU PROYECTO: FUSIÓN ${stats.length}x${config.value}${natText}`;
+        desc = `ESTE ES UN PASO PRINCIPAL.\nVas a mejorar a tu Madre Principal usando un Sacrificio Macho.\n\n`;
+        desc += `🔸 MADRE (Principal): Hereda los stats base [${commonStats.join(", ")}].\n`;
+        desc += `🔹 PADRE (Sacrificio): Aporta el nuevo stat [${newStat}] para completar.`;
     } else {
-        desc = `MADRE: Tiene [${commonStats.join(", ")}] (Lleva ${ITEM_NAME_MAP[commonStats[0]]}).\n`;
-        desc += `PADRE: Tiene [${statsForB.join(", ")}] (Lleva ${ITEM_NAME_MAP[newStat]}).`;
+        stepTitle = `⚙️ PREPARANDO SACRIFICIO ${stats.length}x${config.value}`;
+        desc = `ESTE PASO ES SOLO PARA CREAR MATERIALES.\nNecesitas crear un Macho fuerte para dárselo luego a tu Madre Principal.\n\n`;
+        desc += `🔸 MADRE (Fodder): Tiene [${commonStats.join(", ")}].\n`;
+        desc += `🔹 PADRE (Fodder): Tiene [${statsForB.join(", ")}].`;
     }
 
-    let childGenderCost = isMainLine ? "PAGAR GÉNERO: HEMBRA" : "PAGAR GÉNERO: MACHO";
+    let childGenderCost = isMainLine ? "REQUISITO: HEMBRA (Tu Proyecto)" : "REQUISITO: MACHO (Para usar luego)";
 
-    // AÑADIR EL PASO
     steps.push({
         title: stepTitle,
         desc: desc,
@@ -287,7 +287,7 @@ function createPokemonRecipe(stats, nature, isMainLine) {
             item: itemA, 
             nat: parentA_Config.nature, 
             gender: "Hembra", 
-            role: isMainLine ? "MADRE (Principal)" : "MADRE (Para Sacrificio)", 
+            role: isMainLine ? "MADRE (Principal)" : "MADRE (Sacrificio)", 
         },
         pB: { 
             stats: parentB_Config.stats, 
@@ -299,7 +299,7 @@ function createPokemonRecipe(stats, nature, isMainLine) {
         child: { 
             stats: stats, 
             nat: nature,
-            note: isMainLine ? "Nueva Madre Principal" : "Nuevo Sacrificio Listo",
+            note: isMainLine ? "PROYECTO AVANZADO" : "SACRIFICIO LISTO",
             cost: childGenderCost
         }
     });
@@ -311,128 +311,118 @@ function generateShoppingList() {
     const listDiv = document.getElementById('shopping-list-items');
     listDiv.innerHTML = "";
     
-    // --- 1. AVISO AZUL (Información) ---
+    // NOTA
     let blueNote = document.createElement('div');
     blueNote.className = 'info-note-blue';
-    blueNote.innerHTML = `ℹ️ <strong>REQUISITO DE CRÍA:</strong><br>Todos los Pokémon (Machos y Hembras) deben ser del <strong>MISMO GRUPO HUEVO</strong>.<br>También puedes usar <strong>Dittos</strong> (son universales), aunque revisa si te compensa el precio.`;
+    blueNote.innerHTML = `
+    ℹ️ <strong>REQUISITO DE CRÍA:</strong><br>
+    Todos los Pokémon (Machos y Hembras) deben ser del <strong>MISMO GRUPO HUEVO</strong>. También puedes usar <strong>Dittos</strong> (son universales), aunque revisa si te compensa el precio.
+    <br><br>
+    ✨ <strong>OPTIMIZADO:</strong> Hemos separado Machos, Hembras y tu Madre Principal para que ahorres dinero y no te líes.
+`;
     listDiv.appendChild(blueNote);
 
-    // --- 2. CONTADORES (Matemática Exacta) ---
-    let everstoneCount = 0;
-    let powerItemsCount = {}; // Para contar Brazales
-    let fodderMalesCount = {}; // Para contar Machos Base por Stat
+    // --- 1. SEPARAR LA MADRE PRINCIPAL DEL RESTO ---
+    // Buscamos cuál de los ingredientes es la Madre Inicial (isMain = true)
+    let mainMotherIng = null;
+    let otherIngredients = [];
 
-    // Recorremos los pasos generados para ver qué pide cada uno
-    steps.forEach(step => {
-        // PADRE A (Suele ser la Madre o quien hereda)
-        if (step.pA.item === "Piedraeterna") {
-            everstoneCount++;
+    // Filtramos manualmente
+    for (let ing of rawIngredients) {
+        if (ing.isMain && ing.gender === "Hembra" && !mainMotherIng) {
+            // ¡La encontramos! (Solo la primera, por si acaso)
+            mainMotherIng = ing;
         } else {
-            // Contamos el objeto recio
-            let item = step.pA.item;
-            if (!powerItemsCount[item]) powerItemsCount[item] = 0;
-            powerItemsCount[item]++;
+            otherIngredients.push(ing);
         }
+    }
 
-        // PADRE B (Suele ser el Macho de Sacrificio/Fodder)
-        if (step.pB.item === "Piedraeterna") {
-            everstoneCount++;
+    // --- 2. CONTAR EL RESTO (Sacrificios) ---
+    let totalFemales = {}; 
+    let totalMales = {};   
+    
+    otherIngredients.forEach(ing => {
+        if (ing.gender === "Hembra") {
+            if (!totalFemales[ing.stat]) totalFemales[ing.stat] = 0;
+            totalFemales[ing.stat]++;
         } else {
-            // 1. Contamos el objeto recio que lleva
-            let item = step.pB.item;
-            if (!powerItemsCount[item]) powerItemsCount[item] = 0;
-            powerItemsCount[item]++;
-
-            // 2. Identificamos qué STAT es ese objeto para la lista de Machos
-            // (Ej: Si lleva "Pesa Recia", es un Macho de HP)
-            let statFound = null;
-            for (const [key, val] of Object.entries(ITEM_NAME_MAP)) {
-                if (val === item) { // Si el nombre del objeto coincide
-                    statFound = key; // Guardamos "HP", "Atk", etc.
-                    break;
-                }
-            }
-            
-            if (statFound) {
-                if (!fodderMalesCount[statFound]) fodderMalesCount[statFound] = 0;
-                fodderMalesCount[statFound]++;
-            }
+            if (!totalMales[ing.stat]) totalMales[ing.stat] = 0;
+            totalMales[ing.stat]++;
         }
     });
 
-    // --- 3. CREACIÓN DE LA LISTA VISUAL ---
     const itemsToShow = [];
 
-    // A) HEMBRA BASE (La Madre Inicial)
-    // El primer stat elegido siempre es el de la madre
-    let motherStat = config.selectedStats[0]; 
-    let motherTitle = config.nature 
-        ? `Hembra Base 1x31 (${motherStat}) + Nat. ${config.natureName}` 
-        : `Hembra Base 1x31 (${motherStat})`;
+    // A) LA JOYA DE LA CORONA: MADRE PRINCIPAL
+    if (mainMotherIng) {
+        itemsToShow.push({
+            name: `👑 <strong>MADRE BASE (Tu Proyecto)</strong><br><span style="font-size:0.9em; color:#ccc">Debe ser 1x${config.value} en ${mainMotherIng.stat}</span>`,
+            count: 1,
+            icon: "genero_f.png",
+            isSpecial: true // Para darle estilo dorado si quieres
+        });
+    }
 
-    itemsToShow.push({
-        name: motherTitle,
-        count: 1,
-        icon: "genero_f.png",
-        type: "pokemon"
+    // B) HEMBRAS DE RELLENO
+    for (const [stat, count] of Object.entries(totalFemales)) {
+        itemsToShow.push({
+            name: `Hembras (Sacrificio) 1x${config.value} de <strong>${stat}</strong>`,
+            count: count,
+            icon: "genero_f.png"
+        });
+    }
+
+    // C) MACHOS DE RELLENO
+    for (const [stat, count] of Object.entries(totalMales)) {
+        itemsToShow.push({
+            name: `Machos (Sacrificio) 1x${config.value} de <strong>${stat}</strong>`,
+            count: count,
+            icon: "genero_m.png"
+        });
+    }
+
+    // D) OBJETOS (Igual que antes)
+    let everstoneCount = 0;
+    let powerItemsCount = {};
+    
+    steps.forEach(step => {
+        [step.pA, step.pB].forEach(p => {
+            if (p.item === "Piedraeterna") everstoneCount++;
+            else {
+                if (!powerItemsCount[p.item]) powerItemsCount[p.item] = 0;
+                powerItemsCount[p.item]++;
+            }
+        });
     });
 
-    // B) MACHOS BASE (Desglosados por Stat)
-    // Recorremos el contador que creamos arriba
-    for (const [stat, count] of Object.entries(fodderMalesCount)) {
-        itemsToShow.push({
-            name: `Machos Base 1x31 (<strong>${stat}</strong>)`,
-            count: count,
-            icon: "genero_m.png",
-            type: "pokemon"
-        });
-    }
-
-    // C) PIEDRAS ETERNAS
     if (config.nature && everstoneCount > 0) {
-        itemsToShow.push({ 
-            name: "Piedraeterna (SE CONSUMEN)", 
-            count: everstoneCount, 
-            icon: "piedraeterna.png",
-            type: "item"
-        });
+        itemsToShow.push({ name: "Piedraeterna (SE CONSUMEN)", count: everstoneCount, icon: "piedraeterna.png" });
     }
 
-    // D) OBJETOS RECIOS (Brazales)
     for (const [itemName, count] of Object.entries(powerItemsCount)) {
-        // Buscamos el icono correcto
-        let icon = "brazal_atk.png"; 
+        let icon = "brazal_atk.png";
         for (const [statKey, realName] of Object.entries(ITEM_NAME_MAP)) {
-            if (realName === itemName) {
-                icon = ASSETS_IMG_MAP[statKey];
-                break;
-            }
+            if (realName === itemName) { icon = ASSETS_IMG_MAP[statKey]; break; }
         }
-        itemsToShow.push({ 
-            name: `${itemName} (SE CONSUMEN)`, 
-            count: count, 
-            icon: icon,
-            type: "item"
-        });
+        itemsToShow.push({ name: `${itemName} (SE CONSUMEN)`, count: count, icon: icon });
     }
 
-    // --- 4. RENDERIZADO HTML (Con Checkboxes) ---
+    // --- RENDERIZADO ---
     itemsToShow.forEach(item => {
         let div = document.createElement('div');
         div.className = 'shop-item';
-        
-        // Estilos para que parezca clicable
-        div.style.cursor = 'pointer';
-        div.style.userSelect = 'none'; // Para no seleccionar el texto al hacer clic rápido
+        // Si es la madre especial, le ponemos un borde dorado
+        if (item.isSpecial) {
+            div.style.border = "2px solid #ffd700";
+            div.style.background = "rgba(255, 215, 0, 0.1)";
+        }
 
-        // Lógica del Click: Poner/Quitar clase "comprado" y marcar checkbox
         div.onclick = function() { 
             this.classList.toggle('comprado'); 
             let chk = this.querySelector('input');
             if(chk) chk.checked = !chk.checked;
         };
 
-        // HTML INTERNO
         div.innerHTML = `
             <div style="display:flex; align-items:center; gap:12px;">
                 <input type="checkbox" style="pointer-events:none; transform: scale(1.2);"> 
@@ -445,11 +435,10 @@ function generateShoppingList() {
         `;
         listDiv.appendChild(div);
     });
-
-    // Nota final
+    
     let noteDiv = document.createElement('div');
     noteDiv.className = 'shopping-note';
-    noteDiv.innerHTML = `<strong>TIP:</strong> Toca los elementos para tacharlos según los vayas consiguiendo.`;
+    noteDiv.innerHTML = `<strong>TIP:</strong> Toca los elementos de la lista para <strong>tacharlos</strong> según los vayas capturando o comprando.`;
     listDiv.appendChild(noteDiv);
 }
 
