@@ -106,7 +106,10 @@ window.onload = function() {
 
     // Listeners
     const checkboxes = document.querySelectorAll('.stat-check input');
-    checkboxes.forEach(cb => cb.addEventListener('change', updateCounter));
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', updateCounter);
+        cb.addEventListener('change', updateStartingOptions); 
+    });
 };
 
 function updateCounter() {
@@ -165,6 +168,18 @@ function startBreeding() {
     document.querySelectorAll('.stat-check input:checked').forEach(cb => {
         config.selectedStats.push(cb.value);
     });
+
+	// --- LÓGICA NUEVA: REORDENAR SEGÚN PREFERENCIA DE MADRE ---
+    const preferredStart = document.getElementById('starting-stat-select').value;
+    
+    // Si el usuario eligió algo y ese algo está en la lista de seleccionados...
+    if (preferredStart && config.selectedStats.includes(preferredStart)) {
+        // 1. Quitamos ese stat de donde esté
+        config.selectedStats = config.selectedStats.filter(s => s !== preferredStart);
+        // 2. Lo ponemos el PRIMERO de la lista (Línea Materna)
+        config.selectedStats.unshift(preferredStart);
+    }
+    // -----------------------------------------------------------
 
     if (config.selectedStats.length < 2) {
         alert("Selecciona al menos 2 Stats.");
@@ -491,5 +506,41 @@ function prevStep() {
         currentStepIndex--;
         renderStep();
         saveProgress();
+    }
+}
+
+/* --- NUEVA FUNCIÓN: ACTUALIZAR DESPLEGABLE DE INICIO --- */
+function updateStartingOptions() {
+    const checkboxes = document.querySelectorAll('.stat-check input:checked');
+    const container = document.getElementById('starting-stat-container');
+    const select = document.getElementById('starting-stat-select');
+    
+    // Si no hay stats, ocultamos. Si hay 1 o más, mostramos.
+    if (!container || !select) return; // Seguridad
+
+    if (checkboxes.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+    
+    container.style.display = 'block';
+    
+    // Guardamos la selección actual por si acaso
+    const currentVal = select.value;
+    select.innerHTML = ""; // Limpiamos opciones anteriores
+
+    checkboxes.forEach(cb => {
+        let option = document.createElement('option');
+        option.value = cb.value;
+        option.text = cb.value; // Ej: HP, Atk...
+        select.appendChild(option);
+    });
+
+    // Intentamos restaurar la selección previa si sigue existiendo
+    if (currentVal) {
+        let options = Array.from(select.options);
+        if (options.some(o => o.value === currentVal)) {
+            select.value = currentVal;
+        }
     }
 }
