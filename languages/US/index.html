@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeMMO Breeder PRO</title>
+
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="icon" type="image/x-icon" href="../../assets/favicon.ico">
+    <link rel="manifest" href="../../manifest.json">
+    <meta name="theme-color" content="#121212">
+    
+    <meta name="description" content="PokeMMO tool suite. Includes Breeding Calculator (5x31), Egg Move Planner, and EV Counters. Optimize your competitive gameplay.">
+    <meta name="keywords" content="PokeMMO, Tools, Breeding, Calculator, Guide, IVs, 5x31, EVs, Egg Moves, PokeBreeder Pro">
+    <meta name="author" content="iLupo">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="PokeMMO Breeder PRO">
+    <meta property="og:description" content="The ultimate PokeMMO suite. Breeding, Egg Moves, and EVs in one place.">
+    <meta property="og:url" content="https://pokemmobreederpro.netlify.app/"> 
+    <meta property="og:image" content="https://pokemmobreederpro.netlify.app/assets/favicon.ico">
+    <link rel="canonical" href="https://pokemmobreederpro.netlify.app/">
+
+    <style>
+        /* Estilos específicos para el Hub (Menú Principal) */
+        .hub-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .tool-card {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 280px;
+            position: relative;
+            overflow: hidden;
+        }
+        .tool-card:hover {
+            transform: translateY(-7px);
+            border-color: var(--highlight);
+            box-shadow: 0 10px 30px rgba(0, 230, 118, 0.15);
+            background: #2a2a2a;
+        }
+        .tool-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+        }
+        .tool-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: var(--highlight);
+        }
+        .tool-desc {
+            color: #aaa;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        /* Estado Deshabilitado */
+        .disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            filter: grayscale(0.8);
+            border-color: #333;
+        }
+        .disabled:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: #333;
+        }
+        .coming-soon-badge {
+            background: #ff9800;
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+        /* Footer Específico */
+        .hub-footer {
+            margin-top: 80px;
+            padding: 40px 20px;
+            background: #1a1a1a;
+            border-top: 1px solid #333;
+            text-align: center;
+            color: #777;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+        .lang-btn img {
+            transition: transform 0.2s;
+        }
+        .lang-btn:hover img {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div style="position: absolute; top: 20px; right: 20px; z-index: 100;">
+        <button id="lang-btn" onclick="toggleLangMenu(event)" 
+                style="background: rgba(0,0,0,0.8); color: #ddd; border: 1px solid #555; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 8px; font-family: sans-serif;">
+            Language 🌐 <span style="font-size: 10px;">▼</span>
+        </button>
+
+        <div id="lang-dropdown" style="display: none; position: absolute; top: 110%; right: 0; background: #1a1a1a; border: 1px solid #444; border-radius: 6px; min-width: 160px; flex-direction: column; z-index: 200;">
+            <div style="padding: 10px 15px; background: #333; color: white; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #333;">
+                <img src="../../assets/usa_flag.svg" style="width: 24px;"> <strong>English</strong>
+            </div>
+            <a href="../../index.html" style="padding: 10px 15px; color: #bbb; text-decoration: none; display: flex; align-items: center; gap: 10px;">
+                <img src="../../assets/spain_flag.svg" style="width: 24px;"> Español
+            </a>
+        </div>
+    </div>
+
+    <div class="container" style="text-align:center; margin-top:80px; padding: 0 20px;">
+        <h1 style="font-size: 3em; margin-bottom: 15px; letter-spacing: -1px;">
+            PokeMMO Breeder<span style="color:var(--highlight)"> PRO</span>
+        </h1>
+        <p style="color:#aaa; max-width:600px; margin:0 auto; font-size: 1.1em; line-height: 1.6;">
+            The complete tool suite to master competitive play.<br>
+            Calculate, plan, and train without mistakes.
+        </p>
+    </div>
+
+    <div class="hub-grid">
+        
+        <a href="tools/breeder/index.html" class="tool-card">
+            <div>
+                <div class="tool-icon">🧬</div>
+                <div class="tool-title">Breeding Calculator</div>
+                <div class="tool-desc">
+                    Design your perfect 5x31/6x31 Pokémon. Exact shopping list, Nature management, and cost optimization.
+                </div>
+            </div>
+            <div style="margin-top:20px; color:var(--highlight); font-weight:bold; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px;">
+                Open Tool &rarr;
+            </div>
+        </a>
+
+        <a href="tools/egg_moves/index.html" class="tool-card">
+            <div>
+                <div class="tool-icon">🥚</div>
+                <div class="tool-title">Egg Moves</div>
+                <div class="tool-desc">
+                    Find the shortest breeding chain to inherit any move. Without getting lost in guides.
+                </div>
+            </div>
+            <div style="margin-top:20px; color:var(--highlight); font-weight:bold; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px;">
+                Open Tool &rarr;
+            </div>
+        </a>
+
+        <a href="tools/ev_calc/index.html" class="tool-card">
+            <div>
+                <div class="tool-icon">💪</div>
+                <div class="tool-title">EV Counter</div>
+                <div class="tool-desc">
+                    Calculate exactly how many Hordes you need to defeat to maximize your Pokémon's stats.
+                </div>
+            </div>
+            <div style="margin-top:20px; color:var(--highlight); font-weight:bold; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px;">
+                Open Tool &rarr;
+            </div>
+        </a>
+
+    </div>
+
+    <footer class="hub-footer">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <p style="margin-bottom: 15px;">
+                <strong>PokeMMO Tools</strong> is the ultimate utility for <em>PokeMMO</em> players. Includes <strong>Breeding Calculator</strong>, <strong>Egg Move</strong> planner, and <strong>EV (Horde)</strong> counter. Everything you need to get <strong>5x31</strong> and <strong>6x31</strong> competitive Pokémon without wasting money.
+            </p>
+            <p>
+                Automatically manage the use of <strong>Everstones</strong>, <strong>Power Items</strong>, and complex egg chains. The most advanced step-by-step breeding guide for 2026.
+            </p>
+            <p style="font-size: 0.85em; opacity: 0.6; margin-top: 20px;">
+                PokeMMO Tools © 2026 - Unofficial tools developed by the community (iLupo). Not affiliated with PokeMMO.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+      function toggleLangMenu(e) {
+          e.stopPropagation();
+          const menu = document.getElementById('lang-dropdown');
+          if (menu) menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+      }
+
+      window.addEventListener('click', function(e) {
+          const menu = document.getElementById('lang-dropdown');
+          const btn = document.getElementById('lang-btn');
+          if (menu && menu.style.display === 'flex' && !menu.contains(e.target) && !btn.contains(e.target)) {
+              menu.style.display = 'none';
+          }
+      });
+      
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('../../sw.js');
+        });
+      }
+    </script>
+
+</body>
+</html>
