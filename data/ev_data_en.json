@@ -1,0 +1,42 @@
+{
+    "Kanto": {
+        "HP": { "pokemon": "Dunsparce", "location": "Three Island (Port)", "yield": 5, "method": "Grass", "id": 206 },
+        "Atk": { "pokemon": "Paras", "location": "Mt. Moon (B1F)", "yield": 5, "method": "Cave", "id": 46 },
+        "Def": { "pokemon": "Tangela", "location": "Route 21", "yield": 5, "method": "Grass", "id": 114 },
+        "SpA": { "pokemon": "Oddish / Gloom", "location": "Route 5 / Route 12", "yield": 5, "method": "Grass", "id": 43 },
+        "SpD": { "pokemon": "Tentacruel", "location": "One Island (Surf)", "yield": 10, "method": "Surf", "id": 73 },
+        "Spe": { "pokemon": "Rapidash / Fearow", "location": "Route 12", "yield": 10, "method": "Grass", "id": 78 }
+    },
+    "Hoenn": {
+        "HP": { "pokemon": "Whismur", "location": "Rusturf Tunnel", "yield": 5, "method": "Cave", "id": 293 },
+        "Atk": { "pokemon": "Shuppet", "location": "Mt. Pyre (Inside)", "yield": 5, "method": "Cave", "id": 353 },
+        "Def": { "pokemon": "Sandshrew", "location": "Route 111 (Desert)", "yield": 5, "method": "Sand", "id": 27 },
+        "SpA": { "pokemon": "Spinda", "location": "Route 113", "yield": 5, "method": "Ash Grass", "id": 327 },
+        "SpD": { "pokemon": "Tentacruel", "location": "Abandoned Ship (Surf)", "yield": 10, "method": "Surf", "id": 73 },
+        "Spe": { "pokemon": "Linoone / Manectric", "location": "Route 118", "yield": 10, "method": "Grass", "id": 264 }
+    },
+    "Sinnoh": {
+        "HP": { "pokemon": "Shellos / Bidoof", "location": "Valley Windworks", "yield": 5, "method": "Grass", "id": 422 },
+        "Atk": { "pokemon": "Bibarel / Kricketune", "location": "Route 212 (Rain)", "yield": 10, "method": "Grass", "id": 400 },
+        "Def": { "pokemon": "Pelipper", "location": "Route 222 (Surf)", "yield": 10, "method": "Surf", "id": 279 },
+        "SpA": { "pokemon": "Golduck", "location": "Resort Area (Surf)", "yield": 10, "method": "Surf", "id": 55 },
+        "SpD": { "pokemon": "Tentacruel", "location": "Route 218 (Surf)", "yield": 10, "method": "Surf", "id": 73 },
+        "Spe": { "pokemon": "Raticate / Fearow", "location": "Route 225", "yield": 10, "method": "Grass", "id": 20 }
+    },
+    "Unova": {
+        "HP": { "pokemon": "Stunfisk", "location": "Icirrus City (Puddles)", "yield": 10, "method": "Walk", "id": 618 },
+        "Atk": { "pokemon": "Bouffalant", "location": "Route 10", "yield": 10, "method": "Grass", "id": 626 },
+        "Def": { "pokemon": "Pelipper", "location": "Route 13 (Surf)", "yield": 10, "method": "Surf", "id": 279 },
+        "SpA": { "pokemon": "Heatmor", "location": "Victory Road (Outside)", "yield": 10, "method": "Grass", "id": 631 },
+        "SpD": { "pokemon": "Frillish", "location": "Route 4 / Route 17 (Surf)", "yield": 5, "method": "Surf", "id": 592 },
+        "Spe": { "pokemon": "Rapidash", "location": "Route 12", "yield": 10, "method": "Grass", "id": 78 }
+    },
+    "Johto": {
+        "HP": { "pokemon": "Slowpoke", "location": "Slowpoke Well (B1F Surf)", "yield": 5, "method": "Surf", "id": 79 },
+        "Atk": { "pokemon": "Arbok", "location": "Route 27", "yield": 10, "method": "Grass", "id": 24 },
+        "Def": { "pokemon": "Geodude / Graveler", "location": "Route 45", "yield": 5, "method": "Grass", "id": 74 },
+        "SpA": { "pokemon": "Girafarig", "location": "Route 43", "yield": 10, "method": "Grass", "id": 203 },
+        "SpD": { "pokemon": "Mantine / Tentacruel", "location": "Route 41 (Surf)", "yield": 10, "method": "Surf", "id": 226 },
+        "Spe": { "pokemon": "Raticate", "location": "Route 38", "yield": 10, "method": "Grass", "id": 20 }
+    }
+}

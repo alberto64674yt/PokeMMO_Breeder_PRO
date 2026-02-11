@@ -1,0 +1,42 @@
+{
+    "Kanto": {
+        "HP": { "pokemon": "Dunsparce", "location": "Isla Tera (Puerto)", "yield": 5, "method": "Hierba", "id": 206 },
+        "Atk": { "pokemon": "Paras", "location": "Mt. Moon (Sótano 1)", "yield": 5, "method": "Cueva", "id": 46 },
+        "Def": { "pokemon": "Tangela", "location": "Ruta 21", "yield": 5, "method": "Hierba", "id": 114 },
+        "SpA": { "pokemon": "Oddish / Gloom", "location": "Ruta 5 / Ruta 12", "yield": 5, "method": "Hierba", "id": 43 },
+        "SpD": { "pokemon": "Tentacruel", "location": "Isla Prima (Surf)", "yield": 10, "method": "Surf", "id": 73 },
+        "Spe": { "pokemon": "Rapidash / Fearow", "location": "Ruta 12", "yield": 10, "method": "Hierba", "id": 78 }
+    },
+    "Hoenn": {
+        "HP": { "pokemon": "Whismur", "location": "Túnel Fervagal", "yield": 5, "method": "Cueva", "id": 293 },
+        "Atk": { "pokemon": "Shuppet", "location": "Monte Pírico (Interior)", "yield": 5, "method": "Cueva", "id": 353 },
+        "Def": { "pokemon": "Sandshrew", "location": "Ruta 111 (Desierto)", "yield": 5, "method": "Arena", "id": 27 },
+        "SpA": { "pokemon": "Spinda", "location": "Ruta 113", "yield": 5, "method": "Hierba Ceniza", "id": 327 },
+        "SpD": { "pokemon": "Tentacruel", "location": "Nao Abandonada (Surf)", "yield": 10, "method": "Surf", "id": 73 },
+        "Spe": { "pokemon": "Linoone / Manectric", "location": "Ruta 118", "yield": 10, "method": "Hierba", "id": 264 }
+    },
+    "Sinnoh": {
+        "HP": { "pokemon": "Shellos / Bidoof", "location": "Valle Eólico", "yield": 5, "method": "Hierba", "id": 422 },
+        "Atk": { "pokemon": "Bibarel / Kricketune", "location": "Ruta 212 (Lluvia)", "yield": 10, "method": "Hierba", "id": 400 },
+        "Def": { "pokemon": "Pelipper", "location": "Ruta 222 (Surf)", "yield": 10, "method": "Surf", "id": 279 },
+        "SpA": { "pokemon": "Golduck", "location": "Zona Descanso (Surf)", "yield": 10, "method": "Surf", "id": 55 },
+        "SpD": { "pokemon": "Tentacruel", "location": "Ruta 218 (Surf)", "yield": 10, "method": "Surf", "id": 73 },
+        "Spe": { "pokemon": "Raticate / Fearow", "location": "Ruta 225", "yield": 10, "method": "Hierba", "id": 20 }
+    },
+    "Teselia": {
+        "HP": { "pokemon": "Stunfisk", "location": "Ciudad Teja (Charcos)", "yield": 10, "method": "Caminar", "id": 618 },
+        "Atk": { "pokemon": "Bouffalant", "location": "Ruta 10", "yield": 10, "method": "Hierba", "id": 626 },
+        "Def": { "pokemon": "Pelipper", "location": "Ruta 13 (Surf)", "yield": 10, "method": "Surf", "id": 279 },
+        "SpA": { "pokemon": "Heatmor", "location": "Calle Victoria (Exterior)", "yield": 10, "method": "Hierba", "id": 631 },
+        "SpD": { "pokemon": "Frillish", "location": "Ruta 4 / Ruta 17 (Surf)", "yield": 5, "method": "Surf", "id": 592 },
+        "Spe": { "pokemon": "Rapidash", "location": "Ruta 12", "yield": 10, "method": "Hierba", "id": 78 }
+    },
+    "Johto": {
+        "HP": { "pokemon": "Slowpoke", "location": "Pozo Slowpoke (Sótano Surf)", "yield": 5, "method": "Surf", "id": 79 },
+        "Atk": { "pokemon": "Arbok", "location": "Ruta 27", "yield": 10, "method": "Hierba", "id": 24 },
+        "Def": { "pokemon": "Geodude / Graveler", "location": "Ruta 45", "yield": 5, "method": "Hierba", "id": 74 },
+        "SpA": { "pokemon": "Girafarig", "location": "Ruta 43", "yield": 10, "method": "Hierba", "id": 203 },
+        "SpD": { "pokemon": "Mantine / Tentacruel", "location": "Ruta 41 (Surf)", "yield": 10, "method": "Surf", "id": 226 },
+        "Spe": { "pokemon": "Raticate", "location": "Ruta 38", "yield": 10, "method": "Hierba", "id": 20 }
+    }
+}
