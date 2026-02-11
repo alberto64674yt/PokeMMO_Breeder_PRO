@@ -323,3 +323,19 @@ button:hover { transform: scale(1.02); filter: brightness(1.1); }
     text-decoration: line-through; /* Tachar texto */
     color: #888;
 }
+
+.opt-btn {
+    background: #333;
+    border: none;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: 0.2s;
+    border: 1px solid #444;
+}
+
+.opt-btn:hover {
+    background: #444;
+}
