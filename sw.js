@@ -1,24 +1,44 @@
-/* SERVICE WORKER - POKEMMO BREEDER PRO
-   Permite funcionamiento Offline e Instalación
-*/
+/* SERVICE WORKER - POKEMMO BREEDER PRO v10 */
+const CACHE_NAME = 'pokebreeder-pro-v10';
 
-// --- VERSIÓN DE LA CACHÉ ---
-// Mantenemos la v4 como pediste (asegúrate de que sea superior a la que tienes publicada)
-const CACHE_NAME = 'pokebreeder-pro-v9';
-
-// LISTA DE TODOS LOS ARCHIVOS A GUARDAR EN EL MÓVIL DEL USUARIO
 const ASSETS_TO_CACHE = [
+  // --- RAÍZ Y MENÚS ---
   './',
-  './manifest.json',
   './index.html',
   './style.css',
-  './logic.js',
+  './manifest.json',
+  './robots.txt',
+  './sitemap.xml',
+  './sw.js',
 
-  // --- NUEVO: VERSIÓN INGLESA ---
+  // --- TOOLS (ESPAÑOL) ---
+  './tools/breeder/index.html',
+  './tools/breeder/logic.js',
+  './tools/egg_moves/index.html',
+  './tools/egg_moves/egg_logic.js',
+  './tools/ev_calc/index.html',
+  './tools/ev_calc/ev_logic.js',
+
+  // --- LANGUAGES (INGLÉS) ---
   './languages/US/index.html',
-  './languages/US/logic.js',
+  './languages/US/tools/breeder/index.html',
+  './languages/US/tools/breeder/logic.js',
+  './languages/US/tools/egg_moves/index.html',
+  './languages/US/tools/egg_moves/egg_logic.js',
+  './languages/US/tools/ev_calc/index.html',
+  './languages/US/tools/ev_calc/ev_logic.js',
+
+  // --- DATA (BASES DE DATOS) ---
+  './data/ev_data_es.json',
+  './data/ev_data_en.json',
+  './data/pokedex_es.json',
+  './data/pokedex_en.json',
+  './data/moves_es.json',
+  './data/moves_en.json',
+  './data/chains_es.json',
+  './data/chains_en.json',
   
-  // Imágenes Base
+  // --- ASSETS (IMÁGENES) ---
   './assets/favicon.ico',
   './assets/fondo.jpg',
   './assets/huevo.png',
@@ -27,12 +47,8 @@ const ASSETS_TO_CACHE = [
   './assets/genero_m.png',
   './assets/genero_f.png',
   './assets/nature_icon.png',
-
-  // --- NUEVO: BANDERAS ---
   './assets/usa_flag.svg',
   './assets/spain_flag.svg',
-
-  // Brazales (Objetos Recios)
   './assets/brazal_ps.png',
   './assets/brazal_atk.png',
   './assets/brazal_def.png',
@@ -41,27 +57,19 @@ const ASSETS_TO_CACHE = [
   './assets/brazal_vel.png'
 ];
 
-// 1. INSTALACIÓN: Descargar y guardar archivos
 self.addEventListener('install', (e) => {
-  console.log('[SW] Instalando versión:', CACHE_NAME);
   e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE))
   );
   self.skipWaiting();
 });
 
-// 2. ACTIVACIÓN: Borrar cachés viejas si cambias la versión
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keyList) => {
       return Promise.all(
         keyList.map((key) => {
-          if (key !== CACHE_NAME) {
-            console.log('[SW] Borrando caché vieja:', key);
-            return caches.delete(key);
-          }
+          if (key !== CACHE_NAME) return caches.delete(key);
         })
       );
     })
@@ -69,11 +77,8 @@ self.addEventListener('activate', (e) => {
   return self.clients.claim();
 });
 
-// 3. INTERCEPTAR RED: Usar caché si existe (Offline First)
 self.addEventListener('fetch', (e) => {
   e.respondWith(
-    caches.match(e.request).then((response) => {
-      return response || fetch(e.request);
-    })
+    caches.match(e.request).then((response) => response || fetch(e.request))
   );
 });
