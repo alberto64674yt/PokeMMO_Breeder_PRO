@@ -1,6 +1,6 @@
 <div align="center">
   <img src="assets/favicon.ico" alt="Logo" width="64"/>
-  <h1>PokeMMO Breeder PRO</h1>
+  <h1>PokeMMO Breeder PRO: All-in-One Suite</h1>
 
 ![Netlify Status](https://api.netlify.com/api/v1/badges/eff61593-6ef6-46e9-bc0d-e92100ed7881/deploy-status)
 ![Game](https://img.shields.io/badge/Game-PokeMMO-red)
@@ -23,66 +23,66 @@
 <a name="-english"></a>
 ## 🇺🇸 English
 
-**The ultimate genetic engineering tool for PokeMMO.**
+**The definitive 3-in-1 ecosystem for competitive training in PokeMMO.**
 
-PokeMMO Breeder PRO is not a simple calculator; it is a step-by-step navigation system for complex breeding. Designed to eliminate human error and material waste when creating competitive Pokémon (5x31, 6x31).
+PokeMMO Breeder PRO has evolved from a breeding calculator into a complete suite. It now covers the entire lifecycle of a competitive Pokémon: from discovering how to inherit a move to the final EV training.
 
-### 💎 What does this tool do?
+### 💎 The 3 Pillars of the Suite
 
-Unlike static text guides or old calculators, this system uses a **recursive algorithm** that generates a custom route based on your exact needs.
+1.  **Egg Move Planner:** Find the shortest breeding chain to inherit any move. No more getting lost in complex family trees; the system tells you exactly which male to breed with your female.
+2.  **Breeding Assistant (PRO):** Our signature recursive algorithm. It generates a step-by-step visual guide for 5x31 or 6x31 builds, calculating every item and gender needed to avoid wasting money.
+3.  **Horde & EV Counter:** Once your Pokémon is born, use the optimizer to see exactly how many hordes you need to defeat to maximize your stats, including Macho Brace multipliers.
 
 #### 🔥 Exclusive Features
 
-* **Reverse Architecture:** You define the final result (e.g., Jolly Garchomp 5x31), and the system calculates backward every single cross needed to get there.
-* **100% Safety Logic:** The algorithm prioritizes safe IV overlap routes. It will never suggest a cross that relies on RNG (luck) to inherit a critical stat.
-* **Real Inventory Management:** It calculates with millimeter precision the amount of **consumables** needed, taking into account that in PokeMMO both **Power Items** and **Everstones** are lost after every breed.
-* **Guided Interface:** A visual card system that tells you at each step:
-    * Which gender (Male/Female) you need.
-    * Which item to equip to each parent.
-    * What the guaranteed result is.
+* **Integrated Workflow:** Designed to be used in order: Moves -> Breeding -> EVs.
+* **100% Safety Logic:** Algorithms prioritize guaranteed IV inheritance. No RNG, no luck, just precision.
+* **Cross-Language Support:** Full English and Spanish versions with official in-game terminology.
+* **PWA Ready:** Install the suite on your mobile device and use it offline thanks to our optimized Service Worker.
 
-### ⚙️ How it works
+### ⚙️ How to use the suite
 
-1.  **Design Panel:** You select the desired IVs and Nature.
-2.  **Logistics List:** The app generates a summary with the exact amount of "Base Materials" (Wild 1x31 Pokémon) and all consumable items you must buy/catch/farm.
-3.  **Execution:** The "Step-by-Step" mode takes you by the hand from the base capture to the final egg.
+1.  **Search:** Use the Egg Move tool to plan your initial crosses.
+2.  **Design:** Set your target IVs and Nature in the Breeder panel.
+3.  **Execute:** Follow the visual "Step-by-Step" cards to complete your project.
+4.  **Train:** Use the EV Counter to find the best horde locations for your specific region.
 
 ### ⚠️ Disclaimer
 
-This project is a third-party tool developed for the community. It is not affiliated, associated, or endorsed by **PokeMMO** or **The Pokémon Company**. All images and item names are property of their respective owners.
+This project is a third-party tool developed for the community. It is not affiliated, associated, or endorsed by **PokeMMO** or **The Pokémon Company**.
 
 ---
 
 <a name="-español"></a>
 ## 🇪🇸 Español
 
-**La herramienta de ingeniería genética definitiva para PokeMMO.**
+**El ecosistema 3-en-1 definitivo para el entrenamiento competitivo en PokeMMO.**
 
-PokeMMO Breeder PRO no es una simple calculadora; es un sistema de navegación paso a paso para la crianza compleja. Diseñada para eliminar el error humano y el desperdicio de materiales en la creación de Pokémon competitivos (5x31, 6x31).
+PokeMMO Breeder PRO ha evolucionado de una calculadora de crianza a una suite completa. Ahora cubre todo el ciclo de vida de un Pokémon competitivo: desde descubrir cómo heredar un movimiento hasta el entrenamiento final de EVs.
 
-### 💎 ¿Qué hace esta herramienta?
+### 💎 Los 3 Pilares de la Suite
 
-A diferencia de las guías de texto estáticas o las calculadoras antiguas, este sistema utiliza un **algoritmo recursivo** que genera una ruta personalizada basada en tus necesidades exactas.
+1.  **Planificador de Movimientos Huevo:** Encuentra la cadena de cría más corta para heredar cualquier movimiento. Ya no te perderás en árboles genealógicos complejos; el sistema te dice exactamente qué macho cruzar con tu hembra.
+2.  **Asistente de Crianza (PRO):** Nuestro algoritmo recursivo insignia. Genera una guía visual paso a paso para builds 5x31 o 6x31, calculando cada objeto y género necesario para no desperdiciar dinero.
+3.  **Optimizador de Hordas y EVs:** Una vez que nazca tu Pokémon, usa el contador para ver exactamente cuántas hordas necesitas derrotar para maximizar tus stats, incluyendo multiplicadores por Brazal Firme.
 
 #### 🔥 Características Exclusivas
 
-* **Arquitectura Inversa:** Tú defines el resultado final (ej: Garchomp 5x31 Alegre) y el sistema calcula hacia atrás cada cruce necesario hasta llegar a los Pokémon base.
-* **Lógica de Seguridad 100%:** El algoritmo prioriza rutas seguras de solapamiento de IVs. Jamás te sugerirá un cruce que dependa del azar (RNG) para heredar una estadística crítica.
-* **Gestión de Inventario Real:** Calcula con precisión milimétrica la cantidad de **consumibles** necesarios, teniendo en cuenta que en PokeMMO tanto los **Objetos Recios** como la **Piedraeterna** se pierden tras cada crianza.
-* **Interfaz Guiada:** Un sistema visual de tarjetas que te indica en cada paso:
-    * Qué género (Macho/Hembra) necesitas.
-    * Qué objeto equipar a cada padre.
-    * Cuál es el resultado garantizado.
+* **Flujo de Trabajo Integrado:** Diseñado para usarse en orden: Movimientos -> Crianza -> EVs.
+* **Lógica de Seguridad 100%:** Los algoritmos priorizan la herencia garantizada de IVs. Sin azar ni pérdida de materiales.
+* **Soporte Multiidioma:** Versiones completas en Inglés y Español con terminología oficial del juego.
+* **Listo para PWA:** Instala la suite en tu móvil y úsala sin conexión gracias a nuestro Service Worker optimizado.
 
 ### ⚙️ Funcionamiento
 
-1.  **Panel de Diseño:** Seleccionas los IVs deseados y la Naturaleza.
-2.  **Lista de Logística:** La aplicación genera un resumen con la cantidad exacta de "Materiales Base" (Pokémon 1x31 salvajes) y todos los objetos consumibles que deberás comprar/capturar/farmear.
-3.  **Ejecución:** El modo "Paso a Paso" te lleva de la mano desde la captura base hasta el huevo final.
+1.  **Busca:** Usa la herramienta de Movimientos Huevo para planificar tus cruces iniciales.
+2.  **Diseña:** Define tus IVs y Naturaleza en el panel del Breeder.
+3.  **Ejecuta:** Sigue las tarjetas visuales "Paso a Paso" para completar tu proyecto.
+4.  **Entrena:** Usa el contador de EVs para encontrar las mejores ubicaciones de hordas en tu región.
 
 ### ⚠️ Disclaimer
 
-Este proyecto es una herramienta de terceros desarrollada para la comunidad. No está afiliado, asociado ni respaldado por **PokeMMO** ni **The Pokémon Company**. Todas las imágenes y nombres de objetos son propiedad de sus respectivos dueños.
+Este proyecto es una herramienta de terceros desarrollada para la comunidad. No está afiliado, asociado ni respaldado por **PokeMMO** ni **The Pokémon Company**.
 
 ---
 *Developed by iLupo.*
