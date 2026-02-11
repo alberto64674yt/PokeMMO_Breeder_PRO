@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breeding Calculator - PokeMMO Breeder PRO</title>
+    <link rel="stylesheet" href="../../../../style.css">
+    <link rel="icon" type="image/x-icon" href="../../../../assets/favicon.ico">
+	<link rel="manifest" href="../../../../manifest.json">
+    <meta name="theme-color" content="#121212">
+</head>
+<body>
+	
+        <header style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 10px 20px; background: rgba(0,0,0,0.5); width: 100%; box-sizing: border-box; height: 80px; border-bottom: 1px solid #333; margin-bottom: 30px; border-radius: 0 0 15px 15px;">
+        <div style="display: flex; justify-content: flex-start;">
+            <a href="../../index.html" style="text-decoration: none; color: #aaa; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 22px;">⬅</span> <span class="texto-menu">Main Menu</span>
+            </a>
+        </div>
+        <div style="text-align: center; min-width: 200px;">
+            <h1 style="margin: 0; font-size: 1.6em; line-height: 1; color: white; white-space: nowrap;">POKEMMO <span style="color: #00e676;">BREEDER</span></h1>
+            <p class="subtitulo" style="margin: 5px 0 0; font-size: 0.8em; color: #ccc;">Breeding Assistant</p>
+        </div>
+        <div style="display: flex; justify-content: flex-end;">
+            <div style="position: relative;">
+                <button id="lang-btn" onclick="toggleLangMenu(event)" style="background: #222; color: #ddd; border: 1px solid #555; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+                    <span class="texto-menu">Language</span> 🌐
+                </button>
+                <div id="lang-dropdown" style="display: none; position: absolute; top: 120%; right: 0; background: #1a1a1a; border: 1px solid #444; border-radius: 6px; min-width: 150px; flex-direction: column; z-index: 9999;">
+                    <a href="../../../../tools/breeder/index.html" style="padding: 12px; border-bottom: 1px solid #333; color: #bbb; text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                        <img src="../../../../assets/spain_flag.svg" style="width: 20px;"> Español
+                    </a>
+                    <div style="padding: 12px; color: white; display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                        <img src="../../../../assets/usa_flag.svg" style="width: 20px;"> English
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+	<div class="tool-container">
+    <style> 
+    @media (max-width: 600px) { 
+        .texto-menu, .subtitulo { display: none !important; } 
+        header h1 { font-size: 1.2em !important; } 
+    }
+    /* Esta es la clave para que no se mueva a un lado */
+    .tool-container { 
+        max-width: 1200px; 
+        margin: 0 auto; 
+        padding: 0 20px; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .panel { width: 100%; max-width: 800px; }
+</style>
+
+        <div id="config-panel" class="panel">
+            <h2>🎯 DESIGN YOUR POKEMON</h2>
+            
+            <div class="control-group">
+                <label>Select Stats (Minimum 2):</label>
+                <div class="stats-selector">
+                    <label class="stat-check"><input type="checkbox" value="HP"> HP</label>
+                    <label class="stat-check"><input type="checkbox" value="Atk"> Atk</label>
+                    <label class="stat-check"><input type="checkbox" value="Def"> Def</label>
+                    <label class="stat-check"><input type="checkbox" value="SpA"> SpA</label>
+                    <label class="stat-check"><input type="checkbox" value="SpD"> SpD</label>
+                    <label class="stat-check"><input type="checkbox" value="Spe"> Spe</label>
+                </div>
+                <p class="small-text" id="target-counter">Current Target: Empty</p>
+            </div>
+			<div class="control-group" id="starting-stat-container" style="display:none; border-top: 1px dashed #333; padding-top: 15px; margin-top: 10px;">
+                <label style="color: var(--highlight);">Mother's Starting Stat:</label>
+                <select id="starting-stat-select" class="input-select" style="background: #222; border: 1px solid #555;">
+                    </select>
+                <p class="small-text" style="margin-top:5px; opacity:0.7;">Choose which stat the starting Female will have.</p>
+            </div>
+            <div class="control-group">
+                <label>IV Value:</label>
+                <select id="iv-type">
+                    <option value="31">31 (Perfect)</option>
+                    <option value="0">0 (Meme / Trick Room)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Nature:</label>
+                <div class="nature-input-group">
+                    <div class="toggle-container">
+                        <span>No</span>
+                        <label class="switch">
+                            <input type="checkbox" id="nature-check" onchange="toggleNatureInput()">
+                            <span class="slider round"></span>
+                        </label>
+                        <span>Yes</span>
+                    </div>
+                    
+                    <select id="nature-select" class="input-select" style="display:none;">
+                        <option value="Adamant">Adamant (+Atk -SpA)</option>
+                        <option value="Brave">Brave (+Atk -Spe)</option>
+                        <option value="Lonely">Lonely (+Atk -Def)</option>
+                        <option value="Naughty">Naughty (+Atk -SpD)</option>
+
+                        <option value="Bold">Bold (+Def -Atk)</option>
+                        <option value="Relaxed">Relaxed (+Def -Spe)</option>
+                        <option value="Impish">Impish (+Def -SpA)</option>
+                        <option value="Lax">Lax (+Def -SpD)</option>
+
+                        <option value="Modest">Modest (+SpA -Atk)</option>
+                        <option value="Quiet">Quiet (+SpA -Spe)</option>
+                        <option value="Mild">Mild (+SpA -Def)</option>
+                        <option value="Rash">Rash (+SpA -SpD)</option>
+
+                        <option value="Calm">Calm (+SpD -Atk)</option>
+                        <option value="Sassy">Sassy (+SpD -Spe)</option>
+                        <option value="Careful">Careful (+SpD -SpA)</option>
+                        <option value="Gentle">Gentle (+SpD -Def)</option>
+
+                        <option value="Jolly">Jolly (+Spe -SpA)</option>
+                        <option value="Timid">Timid (+Spe -Atk)</option>
+                        <option value="Hasty">Hasty (+Spe -Def)</option>
+                        <option value="Naive">Naive (+Spe -SpD)</option>
+
+                        <option value="Hardy">Hardy (Neutral)</option>
+                        <option value="Docile">Docile (Neutral)</option>
+                        <option value="Serious">Serious (Neutral)</option>
+                        <option value="Bashful">Bashful (Neutral)</option>
+                        <option value="Quirky">Quirky (Neutral)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="startBreeding()" class="btn-start">GENERATE GUIDE</button>
+        </div>
+
+        <div id="shopping-panel" class="panel hidden">
+            <h2>🛒 SHOPPING LIST</h2>
+            <p>Exact materials for your build:</p>
+            <div id="shopping-list-items" class="shopping-grid">
+                </div>
+            <div class="nav-buttons">
+                <button onclick="resetApp()" class="btn-danger">❌ Cancel</button>
+                <button onclick="goToSteps()" class="btn-next">I HAVE THEM ALL &rarr;</button>
+            </div>
+        </div>
+
+        <div id="step-panel" class="panel hidden full-width">
+            
+            <div class="step-header">
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <div id="step-counter" class="step-counter">Step 1 of X</div>
+                </div>
+                <button onclick="resetApp()" class="btn-reset-small" title="Reiniciar de cero">🔄 RESTART</button>
+            </div>
+
+            <h2 id="step-title">STEP 1</h2>
+            <p id="step-desc" class="step-instruction">...</p>
+
+            <div class="breeding-diagram">
+                
+                <div class="poke-card" id="card-parent-a">
+                    <div class="role-badge">PARENT A</div>
+                    <img src="../../../../assets/pokeball.png" class="poke-img" alt="Pokemon">
+                    <img src="../../../../assets/genero_m.png" class="gender-icon" id="gender-a">
+                    <div class="stats-box" id="stats-a"></div>
+                    <div class="item-slot">
+                        <img id="item-img-a" src="" alt="Item">
+                        <span id="item-name-a">Item A</span>
+                    </div>
+                </div>
+
+                <div class="fusion-operator">+</div>
+
+                <div class="poke-card" id="card-parent-b">
+                    <div class="role-badge">PARENT B</div>
+                    <img src="../../../../assets/pokeball.png" class="poke-img" alt="Pokemon">
+                    <img src="../../../../assets/genero_f.png" class="gender-icon" id="gender-b">
+                    <div class="stats-box" id="stats-b"></div>
+                    <div class="item-slot">
+                        <img id="item-img-b" src="" alt="Item">
+                        <span id="item-name-b">Item B</span>
+                    </div>
+                </div>
+
+                <div class="fusion-arrow">➡</div>
+
+                <div class="poke-card child-card">
+                    <div class="role-badge result">RESULT</div>
+                    <img src="../../../../assets/huevo.png" class="poke-img huevo-anim" alt="Egg">
+                    <div class="stats-box" id="stats-child"></div>
+                    <div class="info-note" id="child-note"></div>
+                </div>
+
+            </div>
+
+            <div class="nav-buttons">
+                <button onclick="prevStep()" class="btn-secondary">Previous</button>
+                <button onclick="nextStep()" class="btn-primary">DONE! Next Step</button>
+            </div>
+
+        </div>
+
+        <footer style="margin-top: 50px; text-align: center; color: #555; font-size: 11px; padding-bottom: 20px;">
+    <p>PokeMMO Breeder PRO © 2026 - iLupo</p>
+		</footer>
+
+	</div>
+	<script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('../../../../sw.js')
+            .then((reg) => console.log('SW Ready ✅', reg.scope))
+            .catch((err) => console.log('SW Failed ❌', err));
+        });
+      }
+    </script>
+
+	<script>
+      function toggleLangMenu(e) {
+          e.stopPropagation();
+          const menu = document.getElementById('lang-dropdown');
+          if (menu) menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+      }
+
+      window.addEventListener('click', function(e) {
+          const menu = document.getElementById('lang-dropdown');
+          const btn = document.getElementById('lang-btn');
+          if (menu && menu.style.display === 'flex' && !menu.contains(e.target) && !btn.contains(e.target)) {
+              menu.style.display = 'none';
+          }
+      });
+    </script>
+
+    <script src="logic.js"></script>
+</body>
+
+</html>
