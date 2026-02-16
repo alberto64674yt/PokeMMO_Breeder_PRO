@@ -261,10 +261,10 @@
         <button onclick="toggleSupport()" style="background:none; border:none; color:#888; cursor:pointer; font-size:1.2em;">&times;</button>
     </div>
 
-    <form name="feedback-en" method="POST" data-netlify="true" enctype="multipart/form-data">
+    <form name="feedback-en" method="POST" data-netlify="true">
         
         <input type="hidden" name="form-name" value="feedback-en">
-		<input type="hidden" name="Ubicacion_Reporte" id="ubicacion-tracker">
+        <input type="hidden" name="Ubicacion_Reporte" id="ubicacion-tracker">
 
         <label style="display:block; color:#ccc; font-size:0.9em; margin-bottom:5px;">Your Email:</label>
         <input type="email" name="email" required placeholder="example@email.com" style="
@@ -289,13 +289,9 @@
             resize: none;
         "></textarea>
         
-        <p style="font-size:0.75em; color:#888; margin-bottom: 10px; line-height: 1.4;">
-            ℹ️ If you need to send a large video, describe it here and I will email you from <strong>alberto64674yt@gmail.com</strong>
+        <p style="font-size:0.75em; color:#888; margin-bottom: 15px; line-height: 1.4;">
+            ℹ️ If you need to attach photos or videos, mention it in the message and I will contact you from <strong>alberto64674yt@gmail.com</strong> so you can send them.
         </p>
-
-        <label style="display:block; color:#ccc; font-size:0.9em; margin-bottom:5px;">Attach Screenshot (Optional):</label>
-        <input type="file" name="captura" accept="image/*" style="font-size:0.8em; color:#aaa; margin-bottom:5px;">
-        <p style="font-size:0.7em; color:#666; margin-bottom: 15px;">Max 10MB per submission.</p>
 
         <button type="submit" style="
             width: 100%; 
@@ -329,7 +325,9 @@
             btn.style.display = 'flex'; 
         }
     }
-	document.addEventListener('DOMContentLoaded', () => {
+    
+    // Auto-Fill Hidden Location URL
+    document.addEventListener('DOMContentLoaded', () => {
         const tracker = document.getElementById('ubicacion-tracker');
         if (tracker) {
             tracker.value = window.location.href;
@@ -338,4 +336,5 @@
 </script>
 
 </body>
+
 </html>
