@@ -1,5 +1,5 @@
-/* SERVICE WORKER - POKEMMO BREEDER PRO v11 */
-const CACHE_NAME = 'pokebreeder-pro-v11';
+/* SERVICE WORKER - POKEMMO BREEDER PRO */
+const CACHE_NAME = 'pokebreeder-pro-v12';
 
 const ASSETS_TO_CACHE = [
   // --- RAÍZ Y MENÚS ---
@@ -82,4 +82,5 @@ self.addEventListener('fetch', (e) => {
     caches.match(e.request).then((response) => response || fetch(e.request))
   );
 });
+
 
