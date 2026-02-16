@@ -166,8 +166,18 @@
         </div>
     </div>
 
-    <footer style="margin-top: 50px; text-align: center; color: #555; font-size: 11px; padding-bottom: 20px;">
-        <p>PokeMMO Tools - EV Counter © 2026</p>
+    <footer class="hub-footer">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <p style="margin-bottom: 15px;">
+                <strong>PokeMMO Tools</strong> is the ultimate utility for <em>PokeMMO</em> players. Includes <strong>Breeding Calculator</strong>, <strong>Egg Move</strong> planner, and <strong>EV (Horde)</strong> counter. Everything you need to get <strong>5x31</strong> and <strong>6x31</strong> competitive Pokémon without wasting money.
+            </p>
+            <p>
+                Automatically manage the use of <strong>Everstones</strong>, <strong>Power Items</strong>, and complex egg chains. The most advanced step-by-step breeding guide for 2026.
+            </p>
+            <p style="font-size: 0.85em; opacity: 0.6; margin-top: 20px;">
+                PokeMMO Breeder PRO © 2026 - Unofficial tools developed by the community, Made By <strong>iLupo</strong> A.K.A <strong>alberto64674yt</strong> . Not affiliated with PokeMMO.
+            </p>
+        </div>
     </footer>
 
     <script src="ev_logic.js"></script>
@@ -186,5 +196,116 @@
         function toggleLangMenu(e) { e.stopPropagation(); document.getElementById('lang-dropdown').style.display = document.getElementById('lang-dropdown').style.display === 'flex' ? 'none' : 'flex'; }
         window.onclick = function(e) { if (!document.getElementById('lang-btn').contains(e.target)) document.getElementById('lang-dropdown').style.display = 'none'; }
     </script>
+	
+	<button id="support-btn" onclick="toggleSupport()" style="
+    position: fixed; 
+    bottom: 20px; 
+    right: 20px; 
+    background: var(--highlight); 
+    color: #000; 
+    border: none; 
+    border-radius: 50px; 
+    padding: 12px 24px; 
+    font-weight: bold; 
+    font-size: 16px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+    cursor: pointer; 
+    z-index: 1000;
+    display: flex; 
+    align-items: center; 
+    gap: 8px;
+    transition: transform 0.2s;
+">
+    💬 Support / Feedback
+</button>
+
+<div id="support-modal" style="
+    display: none; 
+    position: fixed; 
+    bottom: 80px; 
+    right: 20px; 
+    width: 320px; 
+    background: #222; 
+    border: 1px solid #444; 
+    border-radius: 12px; 
+    padding: 20px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+    z-index: 1000;
+    animation: slideUp 0.3s ease-out;
+">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h3 style="margin:0; color:white; font-size:1.1em;">Report Bug / Suggestion</h3>
+        <button onclick="toggleSupport()" style="background:none; border:none; color:#888; cursor:pointer; font-size:1.2em;">&times;</button>
+    </div>
+
+    <form name="feedback-en" method="POST" data-netlify="true" enctype="multipart/form-data">
+        
+        <input type="hidden" name="form-name" value="feedback-en">
+
+        <label style="display:block; color:#ccc; font-size:0.9em; margin-bottom:5px;">Your Email:</label>
+        <input type="email" name="email" required placeholder="example@email.com" style="
+            width: 100%; 
+            padding: 8px; 
+            margin-bottom: 10px; 
+            background: #333; 
+            border: 1px solid #555; 
+            color: white; 
+            border-radius: 4px;
+        ">
+
+        <label style="display:block; color:#ccc; font-size:0.9em; margin-bottom:5px;">Message:</label>
+        <textarea name="mensaje" required placeholder="Describe the issue..." rows="4" style="
+            width: 100%; 
+            padding: 8px; 
+            margin-bottom: 5px; 
+            background: #333; 
+            border: 1px solid #555; 
+            color: white; 
+            border-radius: 4px; 
+            resize: none;
+        "></textarea>
+        
+        <p style="font-size:0.75em; color:#888; margin-bottom: 10px; line-height: 1.4;">
+            ℹ️ If you need to send a large video, describe it here and I will email you from <strong>alberto64674yt@gmail.com</strong>
+        </p>
+
+        <label style="display:block; color:#ccc; font-size:0.9em; margin-bottom:5px;">Attach Screenshot (Optional):</label>
+        <input type="file" name="captura" accept="image/*" style="font-size:0.8em; color:#aaa; margin-bottom:5px;">
+        <p style="font-size:0.7em; color:#666; margin-bottom: 15px;">Max 10MB per submission.</p>
+
+        <button type="submit" style="
+            width: 100%; 
+            padding: 10px; 
+            background: var(--highlight); 
+            color: black; 
+            border: none; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            cursor: pointer;
+        ">Send Report</button>
+    </form>
+</div>
+
+<style>
+    @keyframes slideUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+</style>
+
+<script>
+    function toggleSupport() {
+        const modal = document.getElementById('support-modal');
+        const btn = document.getElementById('support-btn');
+        if (modal.style.display === 'none' || modal.style.display === '') {
+            modal.style.display = 'block';
+            btn.style.display = 'none'; 
+        } else {
+            modal.style.display = 'none';
+            btn.style.display = 'flex'; 
+        }
+    }
+</script>
+	
 </body>
 </html>
