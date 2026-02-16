@@ -325,6 +325,7 @@
     <form name="feedback-es" method="POST" data-netlify="true" enctype="multipart/form-data">
         
         <input type="hidden" name="form-name" value="feedback-es">
+		<input type="hidden" name="Ubicacion_Reporte" id="ubicacion-tracker">
 
         <label style="display:block; color:#ccc; font-size:0.9em; margin-bottom:5px;">Tu Email:</label>
         <input type="email" name="email" required placeholder="ejemplo@email.com" style="
@@ -389,6 +390,12 @@
             btn.style.display = 'flex'; 
         }
     }
+	document.addEventListener('DOMContentLoaded', () => {
+        const tracker = document.getElementById('ubicacion-tracker');
+        if (tracker) {
+            tracker.value = window.location.href;
+        }
+    });
 </script>
 
 </body>
