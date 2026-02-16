@@ -166,8 +166,23 @@
         </div>
     </div>
 
-    <footer style="margin-top: 50px; text-align: center; color: #555; font-size: 11px; padding-bottom: 20px;">
-        <p>PokeMMO Tools - EV Counter © 2026</p>
+    <footer class="hub-footer">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <p style="margin-bottom: 15px;">
+                <strong>PokeMMO Tools</strong> es la herramienta de utilidad definitiva para jugadores de <em>PokeMMO</em>. 
+                Incluye <strong>Calculadora de Crianza</strong> (Breeding), planificador de <strong>Movimientos Huevo</strong> 
+                y contador de <strong>EVs (Hordas)</strong>. Todo lo que necesitas para obtener Pokémon competitivos 
+                <strong>5x31</strong> y <strong>6x31</strong> sin desperdiciar dinero.
+            </p>
+            <p>
+                Gestiona automáticamente el uso de <strong>Piedras Eternas</strong>, <strong>Brazales</strong> y 
+                cadenas de huevo complejas. La guía paso a paso más avanzada para breeding en 2026.
+            </p>
+            <p style="font-size: 0.85em; opacity: 0.6; margin-top: 20px;">
+                PokeMMO Breeder PRO © 2026 - Herramientas no oficiales desarrolladas por la comunidad, Creado Por <strong>iLupo</strong> A.K.A <strong>alberto64674yt</strong> . 
+                No afiliada con PokeMMO.
+            </p>
+        </div>
     </footer>
 
     <script src="ev_logic.js"></script>
@@ -186,5 +201,116 @@
         function toggleLangMenu(e) { e.stopPropagation(); document.getElementById('lang-dropdown').style.display = document.getElementById('lang-dropdown').style.display === 'flex' ? 'none' : 'flex'; }
         window.onclick = function(e) { if (!document.getElementById('lang-btn').contains(e.target)) document.getElementById('lang-dropdown').style.display = 'none'; }
     </script>
+	
+	<button id="support-btn" onclick="toggleSupport()" style="
+    position: fixed; 
+    bottom: 20px; 
+    right: 20px; 
+    background: var(--highlight); 
+    color: #000; 
+    border: none; 
+    border-radius: 50px; 
+    padding: 12px 24px; 
+    font-weight: bold; 
+    font-size: 16px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+    cursor: pointer; 
+    z-index: 1000;
+    display: flex; 
+    align-items: center; 
+    gap: 8px;
+    transition: transform 0.2s;
+">
+    💬 Soporte / Feedback
+</button>
+
+<div id="support-modal" style="
+    display: none; 
+    position: fixed; 
+    bottom: 80px; 
+    right: 20px; 
+    width: 320px; 
+    background: #222; 
+    border: 1px solid #444; 
+    border-radius: 12px; 
+    padding: 20px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+    z-index: 1000;
+    animation: slideUp 0.3s ease-out;
+">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h3 style="margin:0; color:white; font-size:1.1em;">Reportar Bug / Sugerencia</h3>
+        <button onclick="toggleSupport()" style="background:none; border:none; color:#888; cursor:pointer; font-size:1.2em;">&times;</button>
+    </div>
+
+    <form name="feedback-es" method="POST" data-netlify="true" enctype="multipart/form-data">
+        
+        <input type="hidden" name="form-name" value="feedback-es">
+
+        <label style="display:block; color:#ccc; font-size:0.9em; margin-bottom:5px;">Tu Email:</label>
+        <input type="email" name="email" required placeholder="ejemplo@email.com" style="
+            width: 100%; 
+            padding: 8px; 
+            margin-bottom: 10px; 
+            background: #333; 
+            border: 1px solid #555; 
+            color: white; 
+            border-radius: 4px;
+        ">
+
+        <label style="display:block; color:#ccc; font-size:0.9em; margin-bottom:5px;">Mensaje:</label>
+        <textarea name="mensaje" required placeholder="Describe el problema..." rows="4" style="
+            width: 100%; 
+            padding: 8px; 
+            margin-bottom: 5px; 
+            background: #333; 
+            border: 1px solid #555; 
+            color: white; 
+            border-radius: 4px; 
+            resize: none;
+        "></textarea>
+        
+        <p style="font-size:0.75em; color:#888; margin-bottom: 10px; line-height: 1.4;">
+            ℹ️ Si necesitas enviar un video pesado, descríbelo aquí y te escribiré desde <strong>alberto64674yt@gmail.com</strong>
+        </p>
+
+        <label style="display:block; color:#ccc; font-size:0.9em; margin-bottom:5px;">Adjuntar Captura (Opcional):</label>
+        <input type="file" name="captura" accept="image/*" style="font-size:0.8em; color:#aaa; margin-bottom:5px;">
+        <p style="font-size:0.7em; color:#666; margin-bottom: 15px;">Máx 10MB por envío.</p>
+
+        <button type="submit" style="
+            width: 100%; 
+            padding: 10px; 
+            background: var(--highlight); 
+            color: black; 
+            border: none; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            cursor: pointer;
+        ">Enviar Reporte</button>
+    </form>
+</div>
+
+<style>
+    @keyframes slideUp {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+</style>
+
+<script>
+    function toggleSupport() {
+        const modal = document.getElementById('support-modal');
+        const btn = document.getElementById('support-btn');
+        if (modal.style.display === 'none' || modal.style.display === '') {
+            modal.style.display = 'block';
+            btn.style.display = 'none'; 
+        } else {
+            modal.style.display = 'none';
+            btn.style.display = 'flex'; 
+        }
+    }
+</script>
+	
 </body>
 </html>
