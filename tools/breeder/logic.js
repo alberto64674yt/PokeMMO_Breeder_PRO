@@ -201,15 +201,58 @@ function startBreeding() {
 }
 
 function goToSteps() {
+    // 1. Ocultar panel de compra y mostrar pasos
     document.getElementById('shopping-panel').classList.add('hidden');
     document.getElementById('step-panel').classList.remove('hidden');
+    
+    // 2. Iniciar lógica de pasos
     currentStepIndex = 0;
     renderStep();
     saveProgress();
+
+    // 3. ACTIVAR LA BARRA LATERAL (CORREGIDO)
+    const source = document.getElementById('shopping-list-items');
+    const target = document.getElementById('sidebar-content');
+    const btn = document.getElementById('materials-btn');
+
+    if (source && target && btn) {
+        // A) Copiar estructura visual
+        target.innerHTML = source.innerHTML;
+
+        // B) SINCRONIZAR CHECKBOXES (¡ESTA ES LA CORRECCIÓN!)
+        // Recorremos los originales y forzamos a las copias a tener el mismo estado
+        const sourceChecks = source.querySelectorAll('input[type="checkbox"]');
+        const targetChecks = target.querySelectorAll('input[type="checkbox"]');
+        
+        for(let i = 0; i < sourceChecks.length; i++) {
+            if(targetChecks[i]) {
+                targetChecks[i].checked = sourceChecks[i].checked;
+            }
+        }
+
+        // C) REACTIVAR CLICKS EN LA COPIA
+        const items = target.querySelectorAll('.shop-item');
+        items.forEach(item => {
+            item.onclick = function() {
+                this.classList.toggle('comprado'); // Pone/Quita lo gris
+                let chk = this.querySelector('input');
+                if(chk) chk.checked = !chk.checked; // Marca/Desmarca la casilla
+            };
+        });
+
+        // D) Mostrar botón
+        btn.style.display = 'block';
+    }
 }
 
 function resetApp() {
     if(confirm("¿Borrar todo y empezar de cero?")) {
+        // Ocultar barra lateral
+        const sideBtn = document.getElementById('materials-btn');
+        const sidebar = document.getElementById('materials-sidebar');
+        if(sideBtn) sideBtn.style.display = 'none';
+        if(sidebar) sidebar.style.right = '-350px';
+
         localStorage.clear();
         location.reload();
     }
