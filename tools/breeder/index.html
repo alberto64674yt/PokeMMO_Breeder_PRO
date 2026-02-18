@@ -21,7 +21,8 @@
             <h1 style="margin: 0; font-size: 1.6em; line-height: 1; color: white; white-space: nowrap;">POKEMMO <span style="color: #00e676;">BREEDER</span></h1>
             <p class="subtitulo" style="margin: 5px 0 0; font-size: 0.8em; color: #ccc;">Asistente de Crianza</p>
         </div>
-        <div style="display: flex; justify-content: flex-end;">
+        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+				<button onclick="toggleAuthorCard()" style="background: rgba(0,230,118,0.1); color: #00e676; border: 1px solid #00e676; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px; font-weight: bold;">👤 Autor</button>
             <div style="position: relative;">
                 <button id="lang-btn" onclick="toggleLangMenu(event)" style="background: #222; color: #ddd; border: 1px solid #555; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px;">
                     <span class="texto-menu">Language</span> 🌐
@@ -436,6 +437,41 @@
         if (tracker) tracker.value = window.location.href;
     });
 </script>
+	
+<div id="modal-overlay" onclick="toggleAuthorCard()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9998; backdrop-filter: blur(4px);"></div>
+
+<div id="author-modal" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 340px; background: #1a1a1a; border: 1px solid #333; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); z-index: 9999; overflow: hidden; font-family: sans-serif;">
+    
+    <button onclick="toggleAuthorCard()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: #666; font-size: 24px; cursor: pointer; z-index: 10;">&times;</button>
+
+    <div style="background: linear-gradient(135deg, #222, #111); padding: 30px 20px; text-align: center; border-bottom: 1px solid #333;">
+        <div style="width: 100px; height: 100px; margin: 0 auto 15px; border-radius: 50%; border: 3px solid #00e676; overflow: hidden; box-shadow: 0 0 20px rgba(0, 230, 118, 0.3);">
+            <img src="../../assets/perfil.png" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <h2 style="margin: 0; color: white; font-size: 1.5em; letter-spacing: -0.5px;">iLupo A.K.A alberto64674yt</h2>
+        <p style="margin: 5px 0 0; color: #00e676; font-size: 0.85em; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Content Creator & Dev</p>
+    </div>
+
+    <div style="padding: 25px 20px;">
+        <a href="https://www.youtube.com/c/alberto64674yt" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: #c4302b; color: white; text-decoration: none; padding: 12px; border-radius: 10px; font-weight: bold; margin-bottom: 20px; transition: 0.2s;">
+            <svg style="width:24px; height:24px" viewBox="0 0 24 24"><path fill="currentColor" d="M10,15L15.19,12L10,9V15M21.56,7.17C21.81,8.47 22,10.74 22,12C22,13.26 21.81,15.53 21.56,16.83C21.31,18.12 20.19,19.23 18.9,19.44C17.6,19.7 14.58,20 12,20C9.42,20 6.4,19.7 5.1,19.44C3.81,19.23 2.69,18.12 2.44,16.83C2.19,15.53 2,13.26 2,12C2,10.74 2.19,8.47 2.44,7.17C2.69,5.88 3.81,4.77 5.1,4.56C6.4,4.3 9.42,4 12,4C14.58,4 17.6,4.3 18.9,4.56C20.19,4.77 21.31,5.88 21.56,7.17Z" /></svg>
+            YouTube
+        </a>
+
+        <div style="background: #252525; padding: 15px; border-radius: 12px; border: 1px solid #333; text-align: center;">
+            <span style="display: block; color: #fff; font-size: 0.9em; margin-bottom: 8px; text-transform: uppercase; font-weight: bold;">💎 Apoya el Proyecto</span>
+            
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px;">
+                <span style="color: #00e676; font-weight: bold; font-family: monospace; font-size: 1.1em;">albertovgYT</span>
+                <button id="copy-btn" onclick="copyNick()" style="background: #444; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.7em; cursor: pointer; font-weight: bold; transition: 0.2s;">📋 COPIAR</button>
+            </div>
+
+            <p style="margin: 0; font-size: 0.75em; color: #888; font-style: italic; line-height: 1.3;">
+                Acepto Donaciones, Ítems o Pokémon<br>por correo dentro del juego. ¡Gracias!
+            </p>
+        </div>
+    </div>
+</div>
 	
 </body>
 
