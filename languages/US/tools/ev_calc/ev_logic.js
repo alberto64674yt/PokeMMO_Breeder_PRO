@@ -129,3 +129,30 @@ function generateResultCard(statName, targetEVs, info, hordesCount, multiplier, 
     `;
     container.appendChild(card);
 }
+
+	// --- LÓGICA DE LA TARJETA DE AUTOR ---
+function toggleAuthorCard() {
+    const modal = document.getElementById('author-modal');
+    const overlay = document.getElementById('modal-overlay');
+    if (modal.style.display === 'none' || modal.style.display === '') {
+        modal.style.display = 'block';
+        overlay.style.display = 'block';
+    } else {
+        modal.style.display = 'none';
+        overlay.style.display = 'none';
+    }
+}
+
+function copyNick() {
+    const nick = "albertovgYT";
+    navigator.clipboard.writeText(nick).then(() => {
+        const btn = document.getElementById('copy-btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = "✅ COPIED"; // En inglés cambiar a "✅ COPIED"
+        btn.style.background = "#00e676";
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.style.background = "#444";
+        }, 2000);
+    });
+}
