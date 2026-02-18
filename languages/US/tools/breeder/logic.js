@@ -2,6 +2,7 @@
 let currentStepIndex = 0;
 let steps = [];
 let rawIngredients = [];
+let checkedMaterials = [];
 let config = { 
     selectedStats: [], 
     value: 31, 
@@ -125,32 +126,81 @@ function toggleNatureInput() {
 
 /* --- PERSISTENCIA --- */
 function loadProgress() {
-    const savedConfig = localStorage.getItem('breeder_config_final_v4_en');
-    const savedSteps = localStorage.getItem('breeder_steps_final_v4_en');
-    const savedIndex = localStorage.getItem('breeder_index_final_v4_en');
+    const savedConfig = localStorage.getItem('breeder_config_final_v4');
+    const savedSteps = localStorage.getItem('breeder_steps_final_v4');
+    const savedIndex = localStorage.getItem('breeder_index_final_v4');
+    const savedIngredients = localStorage.getItem('breeder_ingredients_v4');
+    const savedChecked = localStorage.getItem('breeder_checked_v4');
 
     if (savedConfig && savedSteps && savedIndex) {
         try {
             config = JSON.parse(savedConfig);
             steps = JSON.parse(savedSteps);
             currentStepIndex = parseInt(savedIndex);
+            if (savedIngredients) rawIngredients = JSON.parse(savedIngredients);
+            if (savedChecked) checkedMaterials = JSON.parse(savedChecked);
 
             if (steps.length > 0) {
+                // 1. Ocultar inicio y mostrar pasos
                 document.getElementById('config-panel').classList.add('hidden');
                 document.getElementById('shopping-panel').classList.add('hidden');
                 document.getElementById('step-panel').classList.remove('hidden');
+                
+                // 2. Regenerar lógica visual
                 renderStep();
+                renderRoadmap();
+
+                // 3. RECUPERAR LISTA DE MATERIALES EN SEGUNDO PLANO
+                generateShoppingList(); // Genera la lista en el panel principal (oculto)
+                
+                // Copiar al sidebar (Como hace goToSteps)
+                const source = document.getElementById('shopping-list-items');
+                const target = document.getElementById('sidebar-content');
+                if (source && target) {
+                    target.innerHTML = source.innerHTML;
+                    
+                    // Reactivar clicks en el sidebar para que guarden estado
+                    const items = target.querySelectorAll('.shop-item');
+                    items.forEach(item => {
+                        item.onclick = function() {
+                            this.classList.toggle('comprado');
+                            let chk = this.querySelector('input');
+                            if(chk) chk.checked = !chk.checked;
+                            
+                            // Guardar el tachado
+                            const nameSpan = this.querySelector('span');
+                            if (nameSpan) {
+                                const txt = nameSpan.innerText;
+                                if (this.classList.contains('comprado')) {
+                                    if (!checkedMaterials.includes(txt)) checkedMaterials.push(txt);
+                                } else {
+                                    checkedMaterials = checkedMaterials.filter(x => x !== txt);
+                                }
+                                saveProgress();
+                            }
+                        };
+                    });
+                }
+
+                // 4. ENCENDER BOTONES (Pero mantener paneles cerrados)
+                const matBtn = document.getElementById('materials-btn');
+                const mapBtn = document.getElementById('roadmap-btn');
+                if (matBtn) matBtn.style.display = 'block';
+                if (mapBtn) mapBtn.style.display = 'flex';
             }
         } catch (e) {
+            console.error("Error cargando save:", e);
             localStorage.clear();
         }
     }
 }
 
 function saveProgress() {
-    localStorage.setItem('breeder_config_final_v4_en', JSON.stringify(config));
-    localStorage.setItem('breeder_steps_final_v4_en', JSON.stringify(steps));
-    localStorage.setItem('breeder_index_final_v4_en', currentStepIndex.toString());
+    localStorage.setItem('breeder_config_final_v4', JSON.stringify(config));
+    localStorage.setItem('breeder_steps_final_v4', JSON.stringify(steps));
+    localStorage.setItem('breeder_index_final_v4', currentStepIndex.toString());
+    localStorage.setItem('breeder_ingredients_v4', JSON.stringify(rawIngredients));
+    localStorage.setItem('breeder_checked_v4', JSON.stringify(checkedMaterials));
 }
 
 /* --- LÓGICA PRINCIPAL --- */
@@ -190,57 +240,71 @@ function startBreeding() {
 }
 
 function goToSteps() {
-    // 1. Ocultar panel de compra y mostrar pasos
     document.getElementById('shopping-panel').classList.add('hidden');
     document.getElementById('step-panel').classList.remove('hidden');
     
-    // 2. Iniciar lógica de pasos
     currentStepIndex = 0;
     renderStep();
     saveProgress();
 
-    // 3. ACTIVAR LA BARRA LATERAL (CORREGIDO)
+    // ACTIVAR MATERIALES (IZQUIERDA)
     const source = document.getElementById('shopping-list-items');
     const target = document.getElementById('sidebar-content');
     const btn = document.getElementById('materials-btn');
 
     if (source && target && btn) {
-        // A) Copiar estructura visual
         target.innerHTML = source.innerHTML;
-
-        // B) SINCRONIZAR CHECKBOXES (¡ESTA ES LA CORRECCIÓN!)
-        // Recorremos los originales y forzamos a las copias a tener el mismo estado
+        
+        // Sincronizar checkboxes visualmente
         const sourceChecks = source.querySelectorAll('input[type="checkbox"]');
         const targetChecks = target.querySelectorAll('input[type="checkbox"]');
-        
         for(let i = 0; i < sourceChecks.length; i++) {
-            if(targetChecks[i]) {
-                targetChecks[i].checked = sourceChecks[i].checked;
-            }
+            if(targetChecks[i]) targetChecks[i].checked = sourceChecks[i].checked;
         }
 
-        // C) REACTIVAR CLICKS EN LA COPIA
+        // --- LÓGICA DE CLICK CON GUARDADO ---
         const items = target.querySelectorAll('.shop-item');
         items.forEach(item => {
             item.onclick = function() {
-                this.classList.toggle('comprado'); // Pone/Quita lo gris
+                this.classList.toggle('comprado');
                 let chk = this.querySelector('input');
-                if(chk) chk.checked = !chk.checked; // Marca/Desmarca la casilla
+                if(chk) chk.checked = !chk.checked;
+
+                // Guardar en memoria
+                const nameSpan = this.querySelector('span');
+                if (nameSpan) {
+                    const txt = nameSpan.innerText;
+                    if (this.classList.contains('comprado')) {
+                        if (!checkedMaterials.includes(txt)) checkedMaterials.push(txt);
+                    } else {
+                        checkedMaterials = checkedMaterials.filter(x => x !== txt);
+                    }
+                    saveProgress();
+                }
             };
         });
 
-        // D) Mostrar botón
         btn.style.display = 'block';
     }
+
+    renderRoadmap();
+    const mapBtn = document.getElementById('roadmap-btn');
+    if(mapBtn) mapBtn.style.display = 'flex';
 }
 
 function resetApp() {
     if(confirm("Delete everything and start from scratch?")) {
-        // Hide sidebar
-        const sideBtn = document.getElementById('materials-btn');
-        const sidebar = document.getElementById('materials-sidebar');
-        if(sideBtn) sideBtn.style.display = 'none';
-        if(sidebar) sidebar.style.right = '-350px';
+        // Hide Materials (LEFT)
+        const matBtn = document.getElementById('materials-btn');
+        const matSide = document.getElementById('materials-sidebar');
+        if(matBtn) matBtn.style.display = 'none';
+        if(matSide) matSide.style.left = '-350px'; 
+
+        // Hide Roadmap (RIGHT)
+        const mapBtn = document.getElementById('roadmap-btn');
+        const mapSide = document.getElementById('roadmap-sidebar');
+        if(mapBtn) mapBtn.style.display = 'none';
+        if(mapSide) mapSide.style.right = '-350px'; 
 
         localStorage.clear();
         location.reload();
@@ -298,7 +362,7 @@ function createPokemonRecipe(stats, nature, isMainLine, requiredGender) {
     let desc = "";
 
     if (isMainLine) {
-        stepTitle = `🏆 YOUR PROJECT: FUSIÓN ${stats.length}x${config.value}${natText}`;
+        stepTitle = `🏆 YOUR PROJECT: FUSION ${stats.length}x${config.value}${natText}`;
         desc = `THIS IS A MAIN STEP.\nYou are going to improve your Main Mother using a Male Sacrifice.\n\n`;
         desc += `🔸 MOTHER (Main): Inherits base stats [${commonStats.join(", ")}].\n`;
         desc += `🔹 FATHER (Sacrifice): Provides the new stat [${newStat}] to complete.`;
@@ -343,37 +407,32 @@ function generateShoppingList() {
     const listDiv = document.getElementById('shopping-list-items');
     listDiv.innerHTML = "";
     
-    // NOTA
     let blueNote = document.createElement('div');
     blueNote.className = 'info-note-blue';
     blueNote.innerHTML = `
     ℹ️ <strong>BREEDING REQUIREMENT:</strong><br>
-    All Pokémon (Males and Females) must be from the <strong>SAME EGG GROUP</strong>. You can also use <strong>Dittos</strong> (they are universal), but check if the price is worth it.
-    <br><br>
-    ✨ <strong>OPTIMIZED:</strong> We have separated Males, Females, and your Main Mother so you save money and don't get confused.
-`;
+    All Pokemon must be from the <strong>SAME EGG GROUP</strong>. You can also use <strong>Dittos</strong>.<br><br>
+    ✨ <strong>OPTIMIZED:</strong> We separated Males, Females and your Base Mother.
+    `;
     listDiv.appendChild(blueNote);
 
-    // --- 1. SEPARAR LA MADRE PRINCIPAL DEL RESTO ---
-    // Buscamos cuál de los ingredientes es la Madre Inicial (isMain = true)
     let mainMotherIng = null;
     let otherIngredients = [];
 
-    // Filtramos manualmente
     for (let ing of rawIngredients) {
+        // CORRECCIÓN: Usar "Female" en lugar de "Hembra"
         if (ing.isMain && ing.gender === "Female" && !mainMotherIng) {
-            // ¡La encontramos! (Solo la primera, por si acaso)
             mainMotherIng = ing;
         } else {
             otherIngredients.push(ing);
         }
     }
 
-    // --- 2. CONTAR EL RESTO (Sacrificios) ---
     let totalFemales = {}; 
     let totalMales = {};   
     
     otherIngredients.forEach(ing => {
+        // CORRECCIÓN: Usar "Female" en lugar de "Hembra"
         if (ing.gender === "Female") {
             if (!totalFemales[ing.stat]) totalFemales[ing.stat] = 0;
             totalFemales[ing.stat]++;
@@ -385,41 +444,37 @@ function generateShoppingList() {
 
     const itemsToShow = [];
 
-    // A) LA JOYA DE LA CORONA: MADRE PRINCIPAL
     if (mainMotherIng) {
         itemsToShow.push({
-            name: `👑 <strong>BASE MOTHER (Your Project)</strong><br><span style="font-size:0.9em; color:#ccc">Must be 1x${config.value} in ${mainMotherIng.stat}</span>`,
+            name: `👑 BASE MOTHER (Your Project) 1x${config.value} in ${mainMotherIng.stat}`,
             count: 1,
             icon: "genero_f.png",
-            isSpecial: true // Para darle estilo dorado si quieres
+            isSpecial: true
         });
     }
 
-    // B) HEMBRAS DE RELLENO
     for (const [stat, count] of Object.entries(totalFemales)) {
         itemsToShow.push({
-            name: `Females (Sacrifice) 1x${config.value} of <strong>${stat}</strong>`,
+            name: `Females (Fodder) 1x${config.value} of ${stat}`,
             count: count,
             icon: "genero_f.png"
         });
     }
 
-    // C) MACHOS DE RELLENO
     for (const [stat, count] of Object.entries(totalMales)) {
         itemsToShow.push({
-            name: `Males (Sacrifice) 1x${config.value} of <strong>${stat}</strong>`,
+            name: `Males (Fodder) 1x${config.value} of ${stat}`,
             count: count,
             icon: "genero_m.png"
         });
     }
 
-    // D) OBJETOS (Igual que antes)
     let everstoneCount = 0;
     let powerItemsCount = {};
     
     steps.forEach(step => {
         [step.pA, step.pB].forEach(p => {
-            if (p.item === "Everstone") everstoneCount++;
+            if (p.item === "Piedraeterna" || p.item === "Everstone") everstoneCount++;
             else {
                 if (!powerItemsCount[p.item]) powerItemsCount[p.item] = 0;
                 powerItemsCount[p.item]++;
@@ -428,22 +483,30 @@ function generateShoppingList() {
     });
 
     if (config.nature && everstoneCount > 0) {
-        itemsToShow.push({ name: "Everstone (CONSUMED)", count: everstoneCount, icon: "piedraeterna.png" });
+        itemsToShow.push({ name: "Everstone (CONSUMABLE)", count: everstoneCount, icon: "piedraeterna.png" });
     }
 
     for (const [itemName, count] of Object.entries(powerItemsCount)) {
         let icon = "brazal_atk.png";
-        for (const [statKey, realName] of Object.entries(ITEM_NAME_MAP)) {
-            if (realName === itemName) { icon = ASSETS_IMG_MAP[statKey]; break; }
-        }
-        itemsToShow.push({ name: `${itemName} (CONSUMED)`, count: count, icon: icon });
+        if(itemName.includes("Weight")) icon = "brazal_ps.png";
+        else if(itemName.includes("Bracer")) icon = "brazal_atk.png";
+        else if(itemName.includes("Belt")) icon = "brazal_def.png";
+        else if(itemName.includes("Lens")) icon = "brazal_spa.png";
+        else if(itemName.includes("Band")) icon = "brazal_spd.png";
+        else if(itemName.includes("Anklet")) icon = "brazal_vel.png";
+        
+        itemsToShow.push({ name: `${itemName} (CONSUMABLE)`, count: count, icon: icon });
     }
 
-    // --- RENDERIZADO ---
     itemsToShow.forEach(item => {
         let div = document.createElement('div');
         div.className = 'shop-item';
-        // Si es la madre especial, le ponemos un borde dorado
+        
+        let cleanName = item.name.replace(/<[^>]*>?/gm, ''); 
+        let isChecked = checkedMaterials.some(saved => saved.includes(cleanName) || cleanName.includes(saved));
+        
+        if (isChecked) div.classList.add('comprado');
+
         if (item.isSpecial) {
             div.style.border = "2px solid #ffd700";
             div.style.background = "rgba(255, 215, 0, 0.1)";
@@ -453,11 +516,19 @@ function generateShoppingList() {
             this.classList.toggle('comprado'); 
             let chk = this.querySelector('input');
             if(chk) chk.checked = !chk.checked;
+            
+            const txt = this.querySelector('span').innerText;
+            if (this.classList.contains('comprado')) {
+                if (!checkedMaterials.includes(txt)) checkedMaterials.push(txt);
+            } else {
+                checkedMaterials = checkedMaterials.filter(x => x !== txt);
+            }
+            saveProgress();
         };
 
         div.innerHTML = `
             <div style="display:flex; align-items:center; gap:12px;">
-                <input type="checkbox" style="pointer-events:none; transform: scale(1.2);"> 
+                <input type="checkbox" ${isChecked ? 'checked' : ''} style="pointer-events:none; transform: scale(1.2);"> 
                 <img src="../../../../assets/${item.icon}" style="width:32px; height:32px; object-fit:contain;">
                 <span style="font-size: 0.95em;">${item.name}</span>
             </div>
@@ -470,7 +541,7 @@ function generateShoppingList() {
     
     let noteDiv = document.createElement('div');
     noteDiv.className = 'shopping-note';
-    noteDiv.innerHTML = `<strong>TIP:</strong> Tap the items on the list to <strong>check them off</strong> as you catch or buy them.`;
+    noteDiv.innerHTML = `<strong>TIP:</strong> Tap items to <strong>cross them out</strong>. They will be saved if you close the page.`;
     listDiv.appendChild(noteDiv);
 }
 
@@ -512,6 +583,7 @@ function renderStep() {
         costBadge.innerText = step.child.cost;
         childCard.appendChild(costBadge);
     }
+	renderRoadmap(); // Sincroniza el mapa al cambiar de paso
 }
 
 function renderCard(cardId, statsId, imgId, txtId, data, val) {
@@ -628,4 +700,135 @@ function updateStartingOptions() {
             select.value = currentVal;
         }
     }
+}
+
+/* --- FUNCIONES NUEVAS: SALTO Y ROADMAP --- */
+
+function jumpToStep() {
+    const input = document.getElementById('jump-input');
+    let val = parseInt(input.value);
+
+    // Validación: debe ser número, mayor que 0 y menor o igual al total
+    if (isNaN(val) || val < 1 || val > steps.length) {
+        alert("Paso inválido / Invalid step"); 
+        return;
+    }
+
+    // Los arrays empiezan en 0, así que restamos 1
+    currentStepIndex = val - 1;
+    renderStep();
+    saveProgress();
+    
+    // Actualizar visualmente el roadmap
+    renderRoadmap();
+}
+
+function renderRoadmap() {
+    const container = document.getElementById('roadmap-content');
+    if (!container) return;
+    
+    container.innerHTML = ""; 
+
+    steps.forEach((step, index) => {
+        let card = document.createElement('div');
+        
+        let isMain = step.title.includes("YOUR PROJECT"); 
+        let borderColor = isMain ? "#ff9800" : "#444"; 
+        let bgColor = isMain ? "rgba(255, 152, 0, 0.05)" : "#222";
+        
+        if (index === currentStepIndex) {
+            borderColor = "#00e676";
+            bgColor = "rgba(0, 230, 118, 0.15)";
+        }
+
+        card.style.cssText = `
+            background: ${bgColor};
+            border-left: 4px solid ${borderColor};
+            border-top: 1px solid #333;
+            border-right: 1px solid #333;
+            border-bottom: 1px solid #333;
+            border-radius: 5px;
+            padding: 5px; 
+            cursor: pointer;
+            margin-bottom: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        `;
+
+        card.onmouseover = () => card.style.background = "#2a2a2a";
+        card.onmouseout = () => card.style.background = bgColor;
+
+        const getIconForItem = (itemName) => {
+            if (!itemName) return null;
+            if (itemName === "Piedraeterna" || itemName === "Everstone") return "piedraeterna.png";
+            for (const [statKey, realName] of Object.entries(ITEM_NAME_MAP)) {
+                if (realName === itemName) return ASSETS_IMG_MAP[statKey];
+            }
+            return "brazal_atk.png";
+        };
+
+        const iconA = getIconForItem(step.pA.item);
+        const iconB = getIconForItem(step.pB.item);
+
+        let cleanTitle = step.title
+            .replace("🏆 YOUR PROJECT: ", "")
+            .replace("⚙️ PREPARING SACRIFICE ", "")
+            .replace("FUSION ", "")
+            .replace("NATURE", "NAT");
+
+        card.innerHTML = `
+            <div style="font-size: 9px; color: #888; display:flex; justify-content:space-between; margin-bottom:2px;">
+                <strong>#${index + 1}</strong>
+                ${index === currentStepIndex ? '<span style="color:#00e676;">● ACTIVE</span>' : ''}
+            </div>
+
+            <div style="display:flex; justify-content: space-between; align-items: flex-start; background: rgba(0,0,0,0.3); padding: 6px; border-radius: 4px;">
+                
+                <div style="display:flex; flex-direction:column; align-items:center; width:48%;">
+                    <div style="position: relative; width: 28px; height: 28px;">
+                        <img src="../../../../assets/pokeball.png" style="width: 100%; height: 100%; opacity: 0.6;">
+                        
+                        <img src="../../../../assets/${step.pA.gender === 'Female' ? 'genero_f.png' : 'genero_m.png'}" 
+                             style="position: absolute; top: -4px; right: -4px; width: 10px; background: rgba(0,0,0,0.8); border-radius: 50%; padding: 1px; border:1px solid #444;">
+                        
+                        ${iconA ? `<img src="../../../../assets/${iconA}" style="position: absolute; bottom: -4px; left: -4px; width: 14px; background: #222; border-radius: 50%; border: 1px solid #555;">` : ''}
+                    </div>
+                    <span style="font-size: 9px; color: #ccc; margin-top: 4px;">${step.pA.stats.length}x31</span>
+                </div>
+
+                <div style="font-size: 9px; color: #555; align-self:center;">+</div>
+
+                <div style="display:flex; flex-direction:column; align-items:center; width:48%;">
+                    <div style="position: relative; width: 28px; height: 28px;">
+                        <img src="../../../../assets/pokeball.png" style="width: 100%; height: 100%; opacity: 0.6;">
+                        
+                        <img src="../../../../assets/${step.pB.gender === 'Female' ? 'genero_f.png' : 'genero_m.png'}" 
+                             style="position: absolute; top: -4px; right: -4px; width: 10px; background: rgba(0,0,0,0.8); border-radius: 50%; padding: 1px; border:1px solid #444;">
+                        
+                        ${iconB ? `<img src="../../../../assets/${iconB}" style="position: absolute; bottom: -4px; left: -4px; width: 14px; background: #222; border-radius: 50%; border: 1px solid #555;">` : ''}
+                    </div>
+                    <span style="font-size: 9px; color: #ccc; margin-top: 4px;">${step.pB.stats.length}x31</span>
+                </div>
+
+            </div>
+
+            <div style="text-align:center; font-size: 7px; color: #555; margin-top:-3px;">▼</div>
+
+            <div style="text-align:center; background: rgba(0,0,0,0.3); padding: 2px; border-radius: 3px; border: 1px dashed #444;">
+                 <span style="font-size: 9px; color: white; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                    ${cleanTitle}
+                </span>
+            </div>
+        `;
+
+        card.onclick = function() {
+            currentStepIndex = index;
+            renderStep();
+            saveProgress();
+            renderRoadmap(); 
+        };
+
+        container.appendChild(card);
+    });
 }
