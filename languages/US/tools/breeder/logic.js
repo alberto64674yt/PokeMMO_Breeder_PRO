@@ -598,6 +598,10 @@ function renderCard(cardId, statsId, imgId, txtId, data, val) {
 
     card.querySelector('.gender-icon').src = "../../../../assets/" + (data.gender === "Female" ? "genero_f.png" : "genero_m.png");
     card.querySelector('.role-badge').innerText = data.role;
+	// FIX: Always give glowing border to main mother (English)
+    if (data.role.includes("Main")) {
+        card.classList.add('has-nature');
+    }
     
     // Solo mostrar badge de naturaleza si data.nat es true (Madres línea principal)
     if (data.nat) {
@@ -794,7 +798,10 @@ function renderRoadmap() {
                         
                         ${iconA ? `<img src="../../../../assets/${iconA}" style="position: absolute; bottom: -4px; left: -4px; width: 14px; background: #222; border-radius: 50%; border: 1px solid #555;">` : ''}
                     </div>
-                    <span style="font-size: 9px; color: #ccc; margin-top: 4px;">${step.pA.stats.length}x31</span>
+                    <span style="font-size: 9px; color: #ccc; margin-top: 4px; text-align: center; line-height: 1.1;">
+    ${step.pA.stats.length}x31<br>
+    <span style="font-size: 6.5px; color: #888; letter-spacing: -0.2px; display: block; max-width: 55px; word-wrap: break-word;">(${step.pA.stats.join(",")})</span>
+</span>
                 </div>
 
                 <div style="font-size: 9px; color: #555; align-self:center;">+</div>
@@ -808,7 +815,10 @@ function renderRoadmap() {
                         
                         ${iconB ? `<img src="../../../../assets/${iconB}" style="position: absolute; bottom: -4px; left: -4px; width: 14px; background: #222; border-radius: 50%; border: 1px solid #555;">` : ''}
                     </div>
-                    <span style="font-size: 9px; color: #ccc; margin-top: 4px;">${step.pB.stats.length}x31</span>
+                    <span style="font-size: 9px; color: #ccc; margin-top: 4px; text-align: center; line-height: 1.1;">
+    ${step.pB.stats.length}x31<br>
+    <span style="font-size: 6.5px; color: #888; letter-spacing: -0.2px; display: block; max-width: 55px; word-wrap: break-word;">(${step.pB.stats.join(",")})</span>
+</span>
                 </div>
 
             </div>
@@ -816,10 +826,13 @@ function renderRoadmap() {
             <div style="text-align:center; font-size: 7px; color: #555; margin-top:-3px;">▼</div>
 
             <div style="text-align:center; background: rgba(0,0,0,0.3); padding: 2px; border-radius: 3px; border: 1px dashed #444;">
-                 <span style="font-size: 9px; color: white; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-                    ${cleanTitle}
-                </span>
-            </div>
+             <span style="font-size: 9px; color: white; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                ${cleanTitle}
+            </span>
+            <span style="font-size: 6.5px; color: #aaa; letter-spacing: -0.2px; display: block; word-wrap: break-word; line-height: 1.2; margin-top: 1px;">
+                (${step.child.stats.join(",")})
+            </span>
+        </div>
         `;
 
         card.onclick = function() {
