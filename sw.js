@@ -40,6 +40,7 @@ const ASSETS_TO_CACHE = [
   
   // --- ASSETS (IMÁGENES) ---
   './assets/favicon.ico',
+  './assets/pwa.png',
   './assets/fondo.jpg',
   './assets/huevo.png',
   './assets/pokeball.png',
@@ -82,6 +83,7 @@ self.addEventListener('fetch', (e) => {
     caches.match(e.request).then((response) => response || fetch(e.request))
   );
 });
+
 
 
 
