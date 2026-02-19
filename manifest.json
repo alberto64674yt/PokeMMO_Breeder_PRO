@@ -1,4 +1,5 @@
 {
+  "id": "/index.html",
   "name": "PokeMMO Breeder PRO",
   "short_name": "PokeBreeder",
   "start_url": "/index.html",
@@ -8,9 +9,10 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/assets/favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "/assets/pwa.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ]
 }
